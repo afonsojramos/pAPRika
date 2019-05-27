@@ -34,9 +34,11 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
 
         runner.on('end', () => {
             failingTestsList.forEach(test => {
-                const testedFunctionName: string = code.getTestedFunctionName(test);
-                code.generateVariations(testSuitePath, testedFunctionName, document, suggestionActionProvider);
-                vscode.window.showInformationMessage(testedFunctionName);
+                const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
+                if (testedFunctionName !== undefined) {
+                    code.generateVariations(testSuitePath, testedFunctionName, document, suggestionActionProvider);
+                    vscode.window.showInformationMessage(testedFunctionName);
+                }
             });
         });
     } catch (err) {
@@ -63,8 +65,10 @@ function runTestSuiteOnce(originalPath: string, testSuitePath: string, document:
 
         runner.on('end', () => {
             failingTestsList.forEach(test => {
-                const testedFunctionName: string = code.getTestedFunctionName(test);
-                vscode.window.showInformationMessage(testedFunctionName);
+                const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
+                if (testedFunctionName !== undefined) {
+                    vscode.window.showInformationMessage(testedFunctionName);
+                }
             });
 
             if (failingTestsList.length === 0) {

@@ -35,7 +35,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
 
     for (let index = 0; index < codeVariations.length; index++) {
         let variation: string = codeVariations[index].variation;
-        let variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmpVar${index}.ts`;
+        let variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(filePath, variationFileName, document, codeVariations[index].replacementList, suggestionActionProvider);
     }
@@ -63,17 +63,16 @@ function replaceLines(originalFile: string, replacementList: Replacement[]): str
     return newFile;
 }
 
-function getTestedFunctionName(test: Mocha.Test): string {
-    const testCode: string = test.body;
-    const sourceFile: ts.SourceFile = ts.createSourceFile('tmp.ts', testCode, ts.ScriptTarget.Latest, true);
-    let expressionStatementList: ts.Node[] = getExpressionStatementList(sourceFile);
+function getTestedFunctionName(test: Mocha.Test): string | undefined { 
+    const testTitle: string = test.title;
+    const regex: RegExp = new RegExp(/(?<=#fix\s*{).*(?=})/);
+    const results: RegExpExecArray | null = regex.exec(testTitle);
 
-    // hardcoded for now
-    let assertCallExpression: ts.Node = expressionStatementList[0].getChildAt(0);
-    let testedCallExpression: ts.Node = assertCallExpression.getChildAt(2).getChildAt(0);
-    let testedFunctionName: string = testedCallExpression.getChildAt(0).getFullText();
-    
-    return testedFunctionName;
+    if (results !== null && results.length >= 1) {
+        return results[0];
+    }
+
+    return undefined;
 }
 
 function getFunctionDeclaration(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
