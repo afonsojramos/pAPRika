@@ -31,8 +31,6 @@ function generateVariations(filePath: string, functionName: string, document: vs
         });
     }
 
-    const sourceFile: ts.SourceFile = ts.createSourceFile('tmpDeclaration.ts', readFileSync(filePath).toString(), ts.ScriptTarget.Latest, true);
-
     for (let index = 0; index < codeVariations.length; index++) {
         let variation: string = codeVariations[index].variation;
         let variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
@@ -57,8 +55,6 @@ function replaceLines(originalFile: string, replacementList: Replacement[]): str
     replacementList.forEach((replacement: Replacement) => {
         newFile = newFile.slice(0, replacement.start) + replacement.newText + newFile.slice(replacement.end, newFile.length);
     });
-
-    //console.log(newFile);
 
     return newFile;
 }
@@ -85,35 +81,6 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 
 function suggestChanges(document: vscode.TextDocument, replacementList: Replacement[], suggestionActionProvider: SuggestionActionProvider) {
     suggestionActionProvider.suggestChangesLint(document, replacementList);
-}
-
-function oldSuggestChanges(originalPath: string, modifiedPath: string) {
-    const originalFile: string[] = readFileSync(originalPath).toString().match(/^.+$/gm) || [];
-    const modifiedFile: string[] = readFileSync(modifiedPath).toString().match(/^.+$/gm) || [];
-
-    const originalSourceFile: ts.SourceFile = ts.createSourceFile('tmpOriginal.ts', readFileSync(originalPath).toString(), ts.ScriptTarget.Latest, true);
-    const modifiedSourceFile: ts.SourceFile = ts.createSourceFile('tmpModified.ts', readFileSync(modifiedPath).toString(), ts.ScriptTarget.Latest, true);
-    
-    let lineNumber: number = 0;
-    let differences: Object[] = [];
-
-    console.log(originalFile.length);
-    console.log(modifiedFile.length);
-
-    for (lineNumber = 0; lineNumber < Math.max(originalFile.length, modifiedFile.length); lineNumber++) {
-        let originalLine: string = originalFile[lineNumber];
-        let modifiedLine: string = modifiedFile[lineNumber];
-
-        if (originalLine !== modifiedLine) {
-            differences.push({
-                'originalLine': originalLine,
-                'modifiedLine': modifiedLine,
-                'lineNumber': lineNumber
-            });
-        }
-    }   
-
-    console.log(differences);
 }
 
 function getTSNodeText(node: ts.Node): string {
