@@ -5,6 +5,10 @@ import * as code from "./code-interface";
 import Replacement from "./replacement";
 import SuggestionActionProvider from "./suggestion-action-provider";
 
+interface TestListMap {
+    [key: string]: Mocha.Test[];
+  }
+
 function getCompletePath(workspacePath: string): string | undefined {
     let workspaceFolders: vscode.WorkspaceFolder[] | undefined = vscode.workspace.workspaceFolders;
 
@@ -23,18 +27,23 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
     // see https://github.com/mochajs/mocha/issues/2783
     delete require.cache[require.resolve(testSuitePath)];
 
-    let failingTestsList: Array<Mocha.Test> = [];
+    let failingTests: TestListMap = {};
 
     try {
         let runner: Mocha.Runner = mocha.run();
 
         runner.on('fail', (test: Mocha.Test) => {
-            failingTestsList.push(test);
+            const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
+
+            if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
+                failingTests[testedFunctionName].push(test);
+            } else if (testedFunctionName !== undefined) {
+                failingTests[testedFunctionName] = [test];
+            }
         });
 
         runner.on('end', () => {
-            failingTestsList.forEach(test => {
-                const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
+            Object.keys(failingTests).forEach(testedFunctionName => {
                 if (testedFunctionName !== undefined) {
                     code.generateVariations(testSuitePath, testedFunctionName, document, suggestionActionProvider);
                     vscode.window.showInformationMessage(testedFunctionName);
