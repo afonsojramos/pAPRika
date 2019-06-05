@@ -9,12 +9,36 @@ interface SyntaxKindToTextMap {
     [key: number]: string;
 }
 
-const mathOperators: number[] = [ts.SyntaxKind.SlashToken, ts.SyntaxKind.AsteriskToken, ts.SyntaxKind.MinusToken, ts.SyntaxKind.PlusToken];
+const mathOperators: number[] = [
+    ts.SyntaxKind.SlashToken,
+    ts.SyntaxKind.AsteriskToken,
+    ts.SyntaxKind.MinusToken,
+    ts.SyntaxKind.PlusToken];
+
 const mathOperatorsToText: SyntaxKindToTextMap = {
     [ts.SyntaxKind.SlashToken]: "/",
     [ts.SyntaxKind.AsteriskToken]: "*",
     [ts.SyntaxKind.MinusToken]: "-",
     [ts.SyntaxKind.PlusToken]: "+"
+};
+
+const comparisonOperators: number[] = [
+    ts.SyntaxKind.FirstBinaryOperator,
+    ts.SyntaxKind.LessThanToken,
+    ts.SyntaxKind.LessThanEqualsToken,
+    ts.SyntaxKind.EqualsEqualsToken,
+    ts.SyntaxKind.EqualsEqualsEqualsToken,
+    ts.SyntaxKind.GreaterThanEqualsToken,
+    ts.SyntaxKind.GreaterThanToken];
+
+const comparisonOperatorsToText: SyntaxKindToTextMap = {
+    [ts.SyntaxKind.FirstBinaryOperator]: "<",
+    [ts.SyntaxKind.LessThanToken]: "<",
+    [ts.SyntaxKind.LessThanEqualsToken]: "<=",
+    [ts.SyntaxKind.EqualsEqualsToken]: "==",
+    [ts.SyntaxKind.EqualsEqualsToken]: "===",
+    [ts.SyntaxKind.GreaterThanEqualsToken]: ">=",
+    [ts.SyntaxKind.GreaterThanToken]: ">"
 };
 
 function generateVariations(filePath: string, functionName: string, document: vscode.TextDocument, suggestionActionProvider: SuggestionActionProvider) {
@@ -32,17 +56,25 @@ function generateVariations(filePath: string, functionName: string, document: vs
 
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
     if (ts.isBinaryExpression(node)) {
-        generateMathOperatorVariants(node, replacementList);
+        generateOperatorVariants(node, replacementList);
     }
 
     ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList));
 }
 
-function generateMathOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
+function generateOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
     const operator: ts.Node = node.getChildAt(1);
     if (mathOperators.includes(operator.kind)) {
         mathOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
             const operatorText = mathOperatorsToText[newOperator];
+            const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), getTSNodeText(operator), operatorText);
+            replacementList.push(replacement);
+        });
+    }
+
+    if (comparisonOperators.includes(operator.kind)) {
+        comparisonOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
+            const operatorText = comparisonOperatorsToText[newOperator];
             const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), getTSNodeText(operator), operatorText);
             replacementList.push(replacement);
         });
