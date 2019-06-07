@@ -17,6 +17,10 @@ export default class SuggestionActionProvider implements vscode.CodeActionProvid
         this.command.dispose();
     }
     
+	public cleanSuggestions(): void {
+		this.diagnosticCollection.clear();
+    }
+    
     public suggestChangesLint(textDocument: vscode.TextDocument, replacementList: Replacement[]) {
         let diagnostics: vscode.Diagnostic[] = new Array<vscode.Diagnostic>();
 
@@ -55,7 +59,5 @@ export default class SuggestionActionProvider implements vscode.CodeActionProvid
         } else {
             vscode.window.showErrorMessage("The suggestion was not applied because it is out of date. You might have tried to apply the same edit twice.");
         }
-
     }
-
 }

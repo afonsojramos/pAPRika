@@ -12,7 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
 	vscode.languages.registerCodeActionsProvider(selector, suggestionActionProvider);
 
 	vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
-		let testSuitePath: string | undefined = tests.getCompletePath('test/test.js');
+		suggestionActionProvider.cleanSuggestions();
+		
+		let testSuitePath: string | undefined = tests.getCompletePath('src/sorting.js');
 		if (testSuitePath !== undefined) {
 			tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
 		}
@@ -21,3 +23,5 @@ export function activate(context: vscode.ExtensionContext) {
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
+
+process.setMaxListeners(0);
