@@ -28,6 +28,8 @@ const comparisonOperators: number[] = [
     ts.SyntaxKind.LessThanEqualsToken,
     ts.SyntaxKind.EqualsEqualsToken,
     ts.SyntaxKind.EqualsEqualsEqualsToken,
+    ts.SyntaxKind.ExclamationEqualsEqualsToken,
+    ts.SyntaxKind.ExclamationEqualsToken,
     ts.SyntaxKind.GreaterThanEqualsToken,
     ts.SyntaxKind.GreaterThanToken];
 
@@ -36,7 +38,9 @@ const comparisonOperatorsToText: SyntaxKindToTextMap = {
     [ts.SyntaxKind.LessThanToken]: "<",
     [ts.SyntaxKind.LessThanEqualsToken]: "<=",
     [ts.SyntaxKind.EqualsEqualsToken]: "==",
-    [ts.SyntaxKind.EqualsEqualsToken]: "===",
+    [ts.SyntaxKind.EqualsEqualsEqualsToken]: "===",
+    [ts.SyntaxKind.ExclamationEqualsEqualsToken]: "!==",
+    [ts.SyntaxKind.ExclamationEqualsToken]: "!=",
     [ts.SyntaxKind.GreaterThanEqualsToken]: ">=",
     [ts.SyntaxKind.GreaterThanToken]: ">"
 };
@@ -57,6 +61,11 @@ function generateVariations(filePath: string, functionName: string, document: vs
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
     if (ts.isBinaryExpression(node)) {
         generateOperatorVariants(node, replacementList);
+        generateOffByOneVariants(node, replacementList);
+    }
+
+    if (ts.isVariableDeclaration(node)) {
+        generateOffByOneVariants(node, replacementList);
     }
 
     ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList));
@@ -79,6 +88,15 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
             replacementList.push(replacement);
         });
     }
+}
+
+function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
+    const rhsNode: ts.Node = node.getChildAt(2);
+    const rhsNodeText: string = rhsNode.getText();
+    const replacementPlusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, rhsNodeText + " + 1");
+    const replacementMinusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, rhsNodeText + " - 1");
+    replacementList.push(replacementPlusOne);
+    replacementList.push(replacementMinusOne);
 }
 
 function replaceLines(originalFile: string, replacement: Replacement): string {
