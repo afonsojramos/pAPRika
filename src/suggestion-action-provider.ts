@@ -57,7 +57,8 @@ export default class SuggestionActionProvider implements vscode.CodeActionProvid
             this.diagnosticCollection.clear();
             return vscode.workspace.applyEdit(edit);
         } else {
-            vscode.window.showErrorMessage("The suggestion was not applied because it is out of date. You might have tried to apply the same edit twice.");
+            vscode.window.showErrorMessage("The suggestion was not applied because the source code changed.");
+            this.diagnosticCollection.clear();
         }
     }
 }
