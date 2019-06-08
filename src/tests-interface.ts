@@ -55,9 +55,10 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
     }
 }
 
-function runTestSuiteOnce(originalPath: string, testSuitePath: string, document: vscode.TextDocument, replacements: Replacement[], suggestionActionProvider: SuggestionActionProvider) {
+function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, replacements: Replacement[], suggestionActionProvider: SuggestionActionProvider, functionName: string): void{
     let mocha: Mocha = new Mocha();
     mocha.addFile(testSuitePath);
+    mocha.fgrep(functionName);
 
     // see https://github.com/mochajs/mocha/issues/2783
     delete require.cache[require.resolve(testSuitePath)];

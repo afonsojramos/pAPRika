@@ -54,7 +54,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
         let variation: string = replaceLines(readFileSync(filePath).toString(), replacementList[index]);
         let variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
         writeFileSync(variationFileName, variation);
-        runTestSuiteOnce(filePath, variationFileName, document, [replacementList[index]], suggestionActionProvider);
+        runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
 }
 
