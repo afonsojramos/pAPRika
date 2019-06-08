@@ -10,11 +10,20 @@ export function activate(context: vscode.ExtensionContext) {
 	let selector: vscode.DocumentSelector = {scheme: 'file', language: 'javascript'};
 	let suggestionActionProvider = new SuggestionActionProvider(context.subscriptions);
 	vscode.languages.registerCodeActionsProvider(selector, suggestionActionProvider);
+	
+	vscode.workspace.onDidOpenTextDocument((document: vscode.TextDocument) => {
+		suggestionActionProvider.cleanSuggestions();
+		
+		let testSuitePath: string | undefined = document.uri.path;
+		if (testSuitePath !== undefined) {
+			tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
+		}
+	});
 
 	vscode.workspace.onDidSaveTextDocument((document: vscode.TextDocument) => {
 		suggestionActionProvider.cleanSuggestions();
 		
-		let testSuitePath: string | undefined = tests.getCompletePath('src/sorting.js');
+		let testSuitePath: string | undefined = document.uri.path;
 		if (testSuitePath !== undefined) {
 			tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
 		}
