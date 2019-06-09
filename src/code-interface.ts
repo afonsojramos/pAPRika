@@ -1,6 +1,6 @@
 import * as ts from "typescript";
 import { readFileSync, fstat, writeFileSync } from "fs";
-import { runTestSuiteOnce } from "./tests-interface";
+import { runTestSuiteOnce, TestResultObject } from "./tests-interface";
 import Replacement from "./replacement";
 import SuggestionActionProvider from "./suggestion-action-provider";
 import * as vscode from 'vscode';

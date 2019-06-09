@@ -4,10 +4,16 @@ import * as Mocha from 'mocha';
 import * as code from "./code-interface";
 import Replacement from "./replacement";
 import SuggestionActionProvider from "./suggestion-action-provider";
+import { decorate } from "./extension";
 
 interface TestListMap {
     [key: string]: Mocha.Test[];
-  }
+}
+
+interface TestResultObject {
+    'test': Mocha.Test;
+    'passed': boolean;
+}
 
 function getCompletePath(workspacePath: string): string | undefined {
     let workspaceFolders: vscode.WorkspaceFolder[] | undefined = vscode.workspace.workspaceFolders;
@@ -27,12 +33,18 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
     // see https://github.com/mochajs/mocha/issues/2783
     delete require.cache[require.resolve(testSuitePath)];
 
-    let failingTests: TestListMap = {};
-
     try {
         let runner: Mocha.Runner = mocha.run();
 
+        let failingTests: TestListMap = {};
+        let testResults: TestResultObject[] = [];
+
         runner.on('fail', (test: Mocha.Test) => {
+            testResults.push({
+                "test": test,
+                "passed": false
+            });
+            
             const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
 
             if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
@@ -42,13 +54,25 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
             }
         });
 
+        runner.on('pass', (test: Mocha.Test) => {
+            testResults.push({
+                "test": test,
+                "passed": true
+            });
+        });
+
         runner.on('end', () => {
             Object.keys(failingTests).forEach(testedFunctionName => {
                 if (testedFunctionName !== undefined) {
                     code.generateVariations(testSuitePath, testedFunctionName, document, suggestionActionProvider);
-                    vscode.window.showInformationMessage(testedFunctionName);
                 }
             });
+
+            const openEditor = vscode.window.visibleTextEditors.filter(
+                editor => editor.document.uri === document.uri
+            )[0];
+
+            decorate(openEditor, testResults);
         });
     } catch (err) {
         console.log(err);
@@ -74,13 +98,6 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
         });
 
         runner.on('end', () => {
-            failingTestsList.forEach(test => {
-                const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
-                if (testedFunctionName !== undefined) {
-                    vscode.window.showInformationMessage(testedFunctionName);
-                }
-            });
-
             if (failingTestsList.length === 0) {
                 code.suggestChanges(document, replacements, suggestionActionProvider);
             }
@@ -94,6 +111,7 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
 }
 
 export {
+    TestResultObject,
     getCompletePath,
     runTestSuite,
     runTestSuiteOnce
