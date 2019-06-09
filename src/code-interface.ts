@@ -1,5 +1,5 @@
 import * as ts from "typescript";
-import { readFileSync, fstat, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
 import { runTestSuiteOnce, TestResultObject } from "./tests-interface";
 import Replacement from "./replacement";
 import SuggestionActionProvider from "./suggestion-action-provider";
@@ -44,6 +44,20 @@ const comparisonOperatorsToText: SyntaxKindToTextMap = {
     [ts.SyntaxKind.GreaterThanEqualsToken]: ">=",
     [ts.SyntaxKind.GreaterThanToken]: ">"
 };
+
+const passDecorationType = vscode.window.createTextEditorDecorationType({
+	after: {
+		contentText: ' // passed',
+		textDecoration: 'none; opacity: 0.35'
+	}
+});
+
+const failDecorationType = vscode.window.createTextEditorDecorationType({
+	after: {
+		contentText: ' // failed',
+		textDecoration: 'none; color: #DC143C; opacity: 0.35'
+	}
+});
 
 function generateVariations(filePath: string, functionName: string, document: vscode.TextDocument, suggestionActionProvider: SuggestionActionProvider) {
     let functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
@@ -129,6 +143,44 @@ function suggestChanges(document: vscode.TextDocument, replacementList: Replacem
     suggestionActionProvider.suggestChangesLint(document, replacementList);
 }
 
+
+function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
+    let documentText: string = editor.document.getText();
+    let documentLines: string[] = documentText.split('\n');
+    let testLines: number[] = [];
+    let testRegex = /it\((\'|\").*(\'|\")/;
+
+    for (let lineIndex = 0; lineIndex < documentLines.length; lineIndex++) {
+        let match = documentLines[lineIndex].match(testRegex);
+
+        if (match !== null && match.index !== undefined) {
+            testLines.push(lineIndex);
+        }
+    }
+
+	let passDecorationsArray: vscode.DecorationOptions[] = [];
+	let failDecorationsArray: vscode.DecorationOptions[] = [];
+    
+    for (let testIndex = 0; testIndex < testResults.length; testIndex++) {
+        let lineIndex: number = testLines[testIndex];
+        let line: string = documentLines[lineIndex];
+
+        let range = new vscode.Range(
+            new vscode.Position(lineIndex, line.length),
+            new vscode.Position(lineIndex, line.length)
+        );
+
+        if (testResults[testIndex].passed) {
+            passDecorationsArray.push({range});
+        } else {
+            failDecorationsArray.push({range});
+        }
+
+        editor.setDecorations(passDecorationType, passDecorationsArray);
+        editor.setDecorations(failDecorationType, failDecorationsArray);
+    }
+}
+
 function getTSNodeText(node: ts.Node): string {
     const tempSourceFile: ts.SourceFile = ts.createSourceFile('temp.js', '', ts.ScriptTarget.Latest, true);
     return ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, tempSourceFile);
@@ -152,5 +204,6 @@ export {
     generateVariations,
     getTestedFunctionName,
     getFunctionDeclaration,
-    suggestChanges
+    suggestChanges,
+    decorate
 };

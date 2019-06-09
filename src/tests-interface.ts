@@ -4,7 +4,6 @@ import * as Mocha from 'mocha';
 import * as code from "./code-interface";
 import Replacement from "./replacement";
 import SuggestionActionProvider from "./suggestion-action-provider";
-import { decorate } from "./extension";
 
 interface TestListMap {
     [key: string]: Mocha.Test[];
@@ -72,7 +71,7 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
                 editor => editor.document.uri === document.uri
             )[0];
 
-            decorate(openEditor, testResults);
+            code.decorate(openEditor, testResults);
         });
     } catch (err) {
         console.log(err);
