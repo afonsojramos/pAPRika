@@ -51,7 +51,7 @@ export default class SuggestionActionProvider implements vscode.CodeActionProvid
         let from = fromMatch![1];
         let to:string = document.getText(range).replace(/\s/g, '');
         if (from === to) {
-            let newText = /.*==>\s(.*)/g.exec(message)![1];
+            let newText = /[\s\S]*==>\s([\s\S]*)/g.exec(message)![1];
             let edit = new vscode.WorkspaceEdit();
             edit.replace(document.uri, range, newText);
             this.diagnosticCollection.clear();

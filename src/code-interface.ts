@@ -60,13 +60,25 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 });
 
 function generateVariations(filePath: string, functionName: string, document: vscode.TextDocument, suggestionActionProvider: SuggestionActionProvider) {
-    let functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
+    const originalFileContent: string = readFileSync(filePath).toString();
+    const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
     let replacementList: Replacement[] = new Array();
     visitDoReplacements(functionNode!, replacementList);
-
+    
     for (let index = 0; index < replacementList.length; index++) {
-        let variation: string = replaceLines(readFileSync(filePath).toString(), replacementList[index]);
-        let variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
+        const variation: string = replaceLines(originalFileContent, replacementList[index]);
+        const variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
+        writeFileSync(variationFileName, variation);
+        runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
+    }
+
+    replacementList = [];
+
+    const originalFunction: string = functionNode!.getText();
+    const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
+    for (let index = 0; index < switchExpressionsVariations.length; index++) {
+        const variation: string = switchExpressionsVariations[index];
+        const variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}switch${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
@@ -85,12 +97,35 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
     ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList));
 }
 
+function switchExpressions(fileText:  string, functionText: string, replacementList: Replacement[]): string[] {
+    const functionLines: string[] = functionText.split('\n');
+    const functionStartPos: number = fileText.indexOf(functionText);
+    let variations: string[] = [];
+
+    for (let i = 0; i < functionLines.length - 1; i++) {
+        let variationLines = [...functionLines];
+        [variationLines[i], variationLines[i + 1]] = [variationLines[i + 1], variationLines[i]];
+        const variationText = fileText.replace(functionText, variationLines.join('\n'));
+        variations.push(variationText);
+
+        const startPos: number = fileText.indexOf(functionLines[i], functionStartPos);
+        const endPos: number = startPos + functionLines[i].length + functionLines[i + 1].length + 1;
+        const oldText: string = [functionLines[i], functionLines[i + 1]].join('\n');
+        const newText: string = [variationLines[i], variationLines[i + 1]].join('\n');
+        const replacement: Replacement = Replacement.replace(startPos, endPos, oldText, newText);
+
+        replacementList.push(replacement);
+    }
+
+    return variations;
+}
+
 function generateOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
     const operator: ts.Node = node.getChildAt(1);
     if (mathOperators.includes(operator.kind)) {
         mathOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
             const operatorText = mathOperatorsToText[newOperator];
-            const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), getTSNodeText(operator), operatorText);
+            const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), operator.getText(), operatorText);
             replacementList.push(replacement);
         });
     }
@@ -98,7 +133,7 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
     if (comparisonOperators.includes(operator.kind)) {
         comparisonOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
             const operatorText = comparisonOperatorsToText[newOperator];
-            const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), getTSNodeText(operator), operatorText);
+            const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), operator.getText(), operatorText);
             replacementList.push(replacement);
         });
     }
