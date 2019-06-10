@@ -106,6 +106,7 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
 
     } catch (err) {
         console.log(err);
+        unlinkSync(testSuitePath);
     }
 }
 

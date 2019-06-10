@@ -86,10 +86,10 @@ function generateVariations(filePath: string, functionName: string, document: vs
 
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
     if (ts.isBinaryExpression(node)) {
-        generateOperatorVariants(node, replacementList);
-        generateOffByOneVariants(node, replacementList);
         generateSwitchVariants(node, replacementList);
         generateParenthesesVariants(node, replacementList);
+        generateOffByOneVariants(node, replacementList);
+        generateOperatorVariants(node, replacementList);
     }
 
     if (ts.isVariableDeclaration(node)) {
