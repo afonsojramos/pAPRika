@@ -88,9 +88,15 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
     if (ts.isBinaryExpression(node)) {
         generateOperatorVariants(node, replacementList);
         generateOffByOneVariants(node, replacementList);
+        generateSwitchVariants(node, replacementList);
+        generateParenthesesVariants(node, replacementList);
     }
 
     if (ts.isVariableDeclaration(node)) {
+        generateOffByOneVariants(node, replacementList);
+    }
+
+    if (ts.isElementAccessExpression(node)) {
         generateOffByOneVariants(node, replacementList);
     }
 
@@ -142,10 +148,33 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
     const rhsNode: ts.Node = node.getChildAt(2);
     const rhsNodeText: string = rhsNode.getText();
-    const replacementPlusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, rhsNodeText + " + 1");
-    const replacementMinusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, rhsNodeText + " - 1");
+    const replacementPlusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} + 1)`);
+    const replacementMinusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} - 1)`);
     replacementList.push(replacementPlusOne);
     replacementList.push(replacementMinusOne);
+}
+
+function generateSwitchVariants(node: ts.Node, replacementList: Replacement[]) {
+    const lhsNode: ts.Node = node.getChildAt(0);
+    const lhsNodeText: string = lhsNode.getText();
+    const operator: ts.Node = node.getChildAt(1);
+    const operatorText: string = operator.getFullText();
+    const rhsNode: ts.Node = node.getChildAt(2);
+    const rhsNodeText: string = rhsNode.getText();
+    const newText: string = rhsNodeText + operatorText + lhsNodeText;
+    const replacement: Replacement = Replacement.replace(lhsNode.getStart(), rhsNode.getEnd(), node.getFullText(), newText);
+    replacementList.push(replacement);
+}
+
+function generateParenthesesVariants(node: ts.Node, replacementList: Replacement[]) {
+    const lhsNode: ts.Node = node.getChildAt(0);
+    const lhsNodeText: string = lhsNode.getText();
+    const rhsNode: ts.Node = node.getChildAt(2);
+    const rhsNodeText: string = rhsNode.getText();
+    const replacementLeftPar: Replacement = Replacement.replace(lhsNode.getStart(), lhsNode.getEnd(), lhsNodeText, `(${lhsNodeText})`);
+    const replacementRightPar: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText})`);
+    replacementList.push(replacementLeftPar);
+    replacementList.push(replacementRightPar);
 }
 
 function replaceLines(originalFile: string, replacement: Replacement): string {
