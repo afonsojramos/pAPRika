@@ -1,0 +1,14 @@
+{
+  "name": "sample-project",
+  "version": "1.0.0",
+  "description": "Sample Project",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^6.0.0"
+  }
+}
