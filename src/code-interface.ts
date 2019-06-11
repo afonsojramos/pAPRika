@@ -92,6 +92,10 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
         generateOperatorVariants(node, replacementList);
     }
 
+    if (ts.isIdentifier(node)) {
+        generateOffByOneIdentifierVariants(node, replacementList);
+    }
+
     if (ts.isVariableDeclaration(node)) {
         generateOffByOneVariants(node, replacementList);
     }
@@ -150,6 +154,15 @@ function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[])
     const rhsNodeText: string = rhsNode.getText();
     const replacementPlusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} + 1)`);
     const replacementMinusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} - 1)`);
+    replacementList.push(replacementPlusOne);
+    replacementList.push(replacementMinusOne);
+}
+
+function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
+    const nodeText: string = node.getFullText();
+    console.log(nodeText);
+    const replacementPlusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} + 1)`);
+    const replacementMinusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} - 1)`);
     replacementList.push(replacementPlusOne);
     replacementList.push(replacementMinusOne);
 }
