@@ -93,6 +93,7 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
         let failingTestsList: Array<Mocha.Test> = [];
 
         runner.on('fail', (test: Mocha.Test) => {
+            console.log(test);
             failingTestsList.push(test);
         });
 

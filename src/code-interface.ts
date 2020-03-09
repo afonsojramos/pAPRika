@@ -67,7 +67,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
     
     for (let index = 0; index < replacementList.length; index++) {
         const variation: string = replaceLines(originalFileContent, replacementList[index]);
-        const variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}${index}.ts`;
+        const variationFileName: string = `/home/afonsojr/ProperFixTest/tmp${functionName}${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
@@ -78,7 +78,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
     const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
     for (let index = 0; index < switchExpressionsVariations.length; index++) {
         const variation: string = switchExpressionsVariations[index];
-        const variationFileName: string = `/home/diogocampos/workspace/feup/diss/project/sample-project/test/tmp${functionName}switch${index}.ts`;
+        const variationFileName: string = `/home/afonsojr/ProperFixTest/tmp${functionName}switch${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
@@ -160,7 +160,6 @@ function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[])
 
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
     const nodeText: string = node.getFullText();
-    console.log(nodeText);
     const replacementPlusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} + 1)`);
     const replacementMinusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} - 1)`);
     replacementList.push(replacementPlusOne);
