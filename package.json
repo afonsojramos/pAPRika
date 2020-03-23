@@ -1,8 +1,10 @@
 {
-	"name": "diogocampos-msc",
-	"displayName": "diogocampos-msc",
-	"description": "Diogo Campos MSc Thesis",
+	"name": "properfix",
+	"displayName": "ProperFix",
+	"description": "Property-Based Automatic Program Repair",
 	"version": "0.0.1",
+	"publisher": "afonsojramos",
+	"repository": "https://github.com/afonsojramos/ProperFix",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
