@@ -67,7 +67,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
     
     for (let index = 0; index < replacementList.length; index++) {
         const variation: string = replaceLines(originalFileContent, replacementList[index]);
-        const variationFileName: string = `/home/afonsojr/ProperFixTest/tmp${functionName}${index}.ts`;
+        const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
@@ -78,7 +78,7 @@ function generateVariations(filePath: string, functionName: string, document: vs
     const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
     for (let index = 0; index < switchExpressionsVariations.length; index++) {
         const variation: string = switchExpressionsVariations[index];
-        const variationFileName: string = `/home/afonsojr/ProperFixTest/tmp${functionName}switch${index}.ts`;
+        const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}switch${index}.ts`;
         writeFileSync(variationFileName, variation);
         runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
     }
