@@ -4,14 +4,16 @@ ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `
 
 ## Features
 
+<!-- List with gifs for each feature example: https://github.com/James-Yu/LaTeX-Workshop -->
+
 - Live code suggestions
 - Myriad of fault detection
 
 ![ProperFix v0.0.1](https://github.com/afonsojramos/ProperFix/blob/master/assets/properfix-v0.0.1.gif)
 
-<!-- ## Requirements
+## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them. -->
+* JavaScript/TypeScript test framework [`mocha`](https://github.com/mochajs/mocha)
 
 <!-- ## Extension Settings
 
