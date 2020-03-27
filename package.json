@@ -3,8 +3,12 @@
 	"displayName": "ProperFix",
 	"description": "Property-Based Automatic Program Repair",
 	"version": "0.0.1",
-	"publisher": "afonsojramos",
+	"publisher": "ProperFix",
 	"repository": "https://github.com/afonsojramos/ProperFix",
+	"author": {
+		"name": "afonsojramos"
+	},
+	"icon": "assets/ProperFix.png",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
@@ -27,21 +31,29 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
+		"vscode:prepublish": "webpack --mode production",
+		"vscode:prepublish2": "npm run compile",
 		"compile": "tsc -p ./",
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"webpack": "webpack --mode development",
+		"webpack-dev": "webpack --mode development --watch",
+		"test-compile": "tsc -p ./"
 	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^10.17.16",
 		"mocha": "^6.2.2",
+		"ts-loader": "^6.2.2",
 		"tslint": "^5.20.1",
 		"typescript": "^3.8.2",
-		"vscode": "^1.1.36"
+		"vscode": "^1.1.36",
+		"webpack": "^4.42.1",
+		"webpack-cli": "^3.3.11"
 	},
 	"dependencies": {
 		"ts-emitter": "^0.4.0"
-	}
+	},
+	"license": "SEE LICENSE IN LICENSE.txt"
 }
