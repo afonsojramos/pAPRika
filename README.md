@@ -1,14 +1,15 @@
-# LSP Example
+# ProperFix
 
-Heavily documented sample code for https://code.visualstudio.com/api/language-extensions/language-server-extension-guide
+ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `Fix` small faults in your code.
 
-## Functionality
+## Features
 
-This Language Server works for plain text file. It has the following language features:
-- Completions
-- Diagnostics regenerated on each file change or configuration change
+<!-- List with gifs for each feature example: https://github.com/James-Yu/LaTeX-Workshop -->
 
-It also includes an End-to-End test.
+- Live code suggestions
+- Myriad of fault detection
+
+![ProperFix v0.0.1](/assets/properfix-v0.0.1.gif)
 
 ## Structure
 
@@ -24,7 +25,26 @@ It also includes an End-to-End test.
         └── server.ts // Language Server entry point
 ```
 
-## Running the Sample
+<!-- ## Requirements
+
+* JavaScript/TypeScript test framework [`mocha`](https://github.com/mochajs/mocha) -->
+
+<!-- ## Extension Settings
+
+Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+
+For example:
+
+This extension contributes the following settings:
+
+* `myExtension.enable`: enable/disable this extension
+* `myExtension.thing`: set to `blah` to do something -->
+
+<!-- ## Known Issues
+
+Lacks the. -->
+
+## Development
 
 - Run `npm install` in this folder. This installs all necessary npm modules in both the client and server folder
 - Open VS Code on this folder.
@@ -36,3 +56,13 @@ It also includes an End-to-End test.
 - In the [Extension Development Host] instance of VSCode, open a document in 'plain text' language mode.
   - Type `j` or `t` to see `Javascript` and `TypeScript` completion.
   - Enter text content such as `AAA aaa BBB`. The extension will emit diagnostics for all words in all-uppercase.
+
+<!-- ## Release Notes
+
+### 0.0.1
+
+Initial release of ProperFix without Property-Based Testing. -->
+
+***Enjoy!***
+
+**Made by [Afonso Ramos](https://github.com/afonsojramos)**
