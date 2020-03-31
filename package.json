@@ -10,7 +10,10 @@
 		"url": "https://github.com/afonsojramos/ProperFix"
 	},
 	"publisher": "afonsojramos",
-	"categories": [],
+	"icon": "assets/ProperFix.png",
+	"categories": [
+		"Other"
+	],
 	"keywords": [
 		"multi-root ready"
 	],
@@ -18,7 +21,7 @@
 		"vscode": "^1.43.0"
 	},
 	"activationEvents": [
-		"onLanguage:plaintext"
+		"onLanguage:javascript"
 	],
 	"main": "./client/out/extension",
 	"contributes": {
