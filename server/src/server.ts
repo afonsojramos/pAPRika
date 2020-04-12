@@ -136,6 +136,16 @@ documents.onDidChangeContent(change => {
 	validateTextDocument(change.document);
 });
 
+documents.onDidSave(documentEvent => {
+	//suggestionActionProvider.cleanSuggestions();
+		
+	let testSuitePath: string | undefined = documentEvent.document.uri;
+	if (testSuitePath !== undefined) {
+		//tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
+		console.log('Saved:', testSuitePath);
+	}
+});
+
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 	// In this simple example we get the settings for every validate run.
 	let settings = await getDocumentSettings(textDocument.uri);
@@ -236,6 +246,9 @@ connection.onDidChangeTextDocument((params) => {
 	// params.textDocument.uri uniquely identifies the document.
 	// params.contentChanges describe the content changes to the document.
 	connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
+});
+connection.onDidSaveTextDocument((params) => {
+	console.log('Saved Text Doc');
 });
 connection.onDidCloseTextDocument((params) => {
 	// A text document got closed in VSCode.
