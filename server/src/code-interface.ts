@@ -1,9 +1,9 @@
 import * as ts from 'typescript';
 import { readFileSync, writeFileSync } from 'fs';
-import { runTestSuiteOnce, TestResultObject } from './tests-interface';
+import { runTest, TestResultObject } from './test-runner';
 import Replacement from './replacement';
-import SuggestionActionProvider from './suggestion-action-provider';
-import * as vscode from 'vscode';
+import { TextEdit, TextDocument, Position } from 'vscode-languageserver';
+import { suggestChangesLint } from './suggestion-provider';
 
 interface SyntaxKindToTextMap {
     [key: number]: string;
@@ -45,7 +45,7 @@ const comparisonOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.GreaterThanToken]: '>'
 };
 
-const passDecorationType = vscode.window.createTextEditorDecorationType({
+/* const passDecorationType = vscode.window.createTextEditorDecorationType({
 	after: {
 		contentText: ' // passed',
 		textDecoration: 'none; opacity: 0.35'
@@ -57,21 +57,23 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 		contentText: ' // failed',
 		textDecoration: 'none; color: #DC143C; opacity: 0.35'
 	}
-});
+}); */
 
-function generateVariations(filePath: string, functionName: string, document: vscode.TextDocument, suggestionActionProvider: SuggestionActionProvider) {
+function generateVariations(filePath: string, functionName: string, document: TextDocument) {
+	console.log(filePath);
 	const originalFileContent: string = readFileSync(filePath).toString();
 	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
 	let replacementList: Replacement[] = new Array();
 	visitDoReplacements(functionNode!, replacementList);
+
+	console.log(3);
     
 	for (let index = 0; index < replacementList.length; index++) {
-		console.log(vscode.workspace.workspaceFolders);
-        
 		const variation: string = replaceLines(originalFileContent, replacementList[index]);
-		const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}${index}.ts`;
-		writeFileSync(variationFileName, variation);
-		runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
+		//const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}${index}.ts`;
+		//writeFileSync(variationFileName, variation);
+		//runTest(variationFileName, document, [replacementList[index]], functionName);
+		console.log(filePath);		
 	}
 
 	replacementList = [];
@@ -80,9 +82,9 @@ function generateVariations(filePath: string, functionName: string, document: vs
 	const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
 	for (let index = 0; index < switchExpressionsVariations.length; index++) {
 		const variation: string = switchExpressionsVariations[index];
-		const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}switch${index}.ts`;
-		writeFileSync(variationFileName, variation);
-		runTestSuiteOnce(variationFileName, document, [replacementList[index]], suggestionActionProvider, functionName);
+		//const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}switch${index}.ts`;
+		//writeFileSync(variationFileName, variation);
+		//runTest(variationFileName, document, [replacementList[index]], functionName);
 	}
 }
 
@@ -217,12 +219,12 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode));
 }
 
-function suggestChanges(document: vscode.TextDocument, replacementList: Replacement[], suggestionActionProvider: SuggestionActionProvider) {
-	suggestionActionProvider.suggestChangesLint(document, replacementList);
+function suggestChanges(document: TextDocument, replacementList: Replacement[]) {
+	suggestChangesLint(document, replacementList);
 }
 
 
-function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
+/* function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
 	let documentText: string = editor.document.getText();
 	let documentLines: string[] = documentText.split('\n');
 	let testLines: number[] = [];
@@ -236,16 +238,16 @@ function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): v
 		}
 	}
 
-	let passDecorationsArray: vscode.DecorationOptions[] = [];
-	let failDecorationsArray: vscode.DecorationOptions[] = [];
+	let passDecorationsArray: DecorationOptions[] = [];
+	let failDecorationsArray: DecorationOptions[] = [];
     
 	for (let testIndex = 0; testIndex < testResults.length; testIndex++) {
 		let lineIndex: number = testLines[testIndex];
 		let line: string = documentLines[lineIndex];
 
-		let range = new vscode.Range(
-			new vscode.Position(lineIndex, line.length),
-			new vscode.Position(lineIndex, line.length)
+		let range = new Range(
+			new Position(lineIndex, line.length),
+			new Position(lineIndex, line.length)
 		);
 
 		if (testResults[testIndex].passed) {
@@ -257,7 +259,7 @@ function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): v
 		editor.setDecorations(passDecorationType, passDecorationsArray);
 		editor.setDecorations(failDecorationType, failDecorationsArray);
 	}
-}
+} */
 
 function getTSNodeText(node: ts.Node): string {
 	const tempSourceFile: ts.SourceFile = ts.createSourceFile('temp.js', '', ts.ScriptTarget.Latest, true);
@@ -282,6 +284,5 @@ export {
 	generateVariations,
 	getTestedFunctionName,
 	getFunctionDeclaration,
-	suggestChanges,
-	decorate
+	suggestChanges
 };
