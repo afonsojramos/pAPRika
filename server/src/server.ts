@@ -139,10 +139,21 @@ documents.onDidChangeContent(change => {
 documents.onDidSave(documentEvent => {
 	//suggestionActionProvider.cleanSuggestions();
 		
-	let testSuitePath: string | undefined = documentEvent.document.uri;
+	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
+	if (testSuitePath !== undefined) {
+		console.log('Saved:', testSuitePath);
+		//tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
+		runTestSuite(testSuitePath, documentEvent.document);
+	}
+});
+
+documents.onDidOpen(documentEvent => {
+	//suggestionActionProvider.cleanSuggestions();
+		
+	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
 	if (testSuitePath !== undefined) {
 		//tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
-		console.log('Saved:', testSuitePath);
+		console.log('Opened:', testSuitePath);
 	}
 });
 
