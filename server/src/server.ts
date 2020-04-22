@@ -21,6 +21,7 @@ import {
 import {
 	TextDocument
 } from 'vscode-languageserver-textdocument';
+import { runTestSuite } from './test-runner';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -177,7 +178,7 @@ async function validateTextDocument(textDocument: TextDocument): Promise<void> {
 				end: textDocument.positionAt(m.index + m[0].length)
 			},
 			message: `${m[0]} is all uppercase.`,
-			source: 'ex'
+			source: 'ProperFix'
 		};
 		if (hasDiagnosticRelatedInformationCapability) {
 			diagnostic.relatedInformation = [
