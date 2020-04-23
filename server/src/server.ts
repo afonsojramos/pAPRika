@@ -3,29 +3,15 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import {
-	createConnection,
-	TextDocuments,
-	Diagnostic,
-	DiagnosticSeverity,
-	ProposedFeatures,
-	InitializeParams,
-	DidChangeConfigurationNotification,
-	CompletionItem,
-	CompletionItemKind,
-	TextDocumentPositionParams,
-	TextDocumentSyncKind,
-	InitializeResult
-} from 'vscode-languageserver';
-
-import {
-	TextDocument
-} from 'vscode-languageserver-textdocument';
+import { CompletionItem, CompletionItemKind, Connection, createConnection, Diagnostic, DiagnosticSeverity, DidChangeConfigurationNotification, InitializeParams, InitializeResult, ProposedFeatures, TextDocumentPositionParams, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { runTestSuite } from './test-runner';
+import SuggestionProvider from './suggestion-provider';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
-let connection = createConnection(ProposedFeatures.all);
+let connection: Connection = createConnection(ProposedFeatures.all);
+let suggestionProvider = new SuggestionProvider(connection);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -143,8 +129,7 @@ documents.onDidSave(documentEvent => {
 	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
 	if (testSuitePath !== undefined) {
 		console.log('Saved:', testSuitePath);
-		//tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
-		runTestSuite(testSuitePath, documentEvent.document);
+		runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 	}
 });
 
@@ -153,7 +138,7 @@ documents.onDidOpen(documentEvent => {
 		
 	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
 	if (testSuitePath !== undefined) {
-		//tests.runTestSuite(testSuitePath, document, suggestionActionProvider);
+		//runTestSuite(testSuitePath, documentEvent.document);
 		console.log('Opened:', testSuitePath);
 	}
 });

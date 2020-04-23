@@ -16,16 +16,16 @@ interface TestResultObject {
 
 function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {
 	let mocha: Mocha = new Mocha();
-	let filePath: RegExpMatchArray | null;
-	filePath = testSuitePath.match('[^\/]*.js$');
-	if (filePath === null)	{ console.error('File Path not found'); return; }
+	let filePath: string;
+	filePath = testSuitePath.replace(/^.*[\\\/]/, '');
 
-	mocha.addFile(filePath[0]);
-	console.log('Mocha added file: ' + filePath[0]);
+	mocha.addFile(filePath);
+
+	console.log('Mocha added file: ' + filePath);
 
 	// see https://github.com/mochajs/mocha/issues/2783
 	// Not working on second run
-	delete require.cache[filePath[0]];
+	delete require.cache[__dirname + '\\' + filePath];
 
 	try {
 		let runner: Mocha.Runner = mocha.run();
@@ -38,7 +38,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 				'test': test,
 				'passed': false
 			});
-            
+
 			const testedFunctionName: string | undefined = getTestedFunctionName(test);
 
 			if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
