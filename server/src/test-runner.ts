@@ -1,9 +1,8 @@
 import { unlinkSync } from 'fs';
-import * as vscode from 'vscode';
 import * as Mocha from 'mocha';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import * as code from './code-interface';
 import Replacement from './replacement';
-import SuggestionActionProvider from './suggestion-action-provider';
 
 interface TestListMap {
     [key: string]: Mocha.Test[];
@@ -14,20 +13,14 @@ interface TestResultObject {
     'passed': boolean;
 }
 
-function getCompletePath(workspacePath: string): string | undefined {
-	let workspaceFolders: vscode.WorkspaceFolder[] | undefined = vscode.workspace.workspaceFolders;
-
-	if (workspaceFolders !== undefined) {
-		let completePath: string = workspaceFolders[0].uri.path + '/' + workspacePath;
-		return completePath;
-	}
-
-	return undefined;
-}
-
-function runTestSuite(testSuitePath: string, document: vscode.TextDocument, suggestionActionProvider: SuggestionActionProvider) {
+function runTestSuite(testSuitePath: string, document: TextDocument) {
 	let mocha: Mocha = new Mocha();
-	mocha.addFile(testSuitePath);
+	let filePath: RegExpMatchArray | null;
+	filePath = testSuitePath.match('[^\/]*.js$');
+	if (filePath === null)	{return;}
+
+	mocha.addFile(filePath[0]);
+	console.log('Mocha added file: ' + filePath[0]);
 
 	// see https://github.com/mochajs/mocha/issues/2783
 	delete require.cache[require.resolve(testSuitePath)];
@@ -62,8 +55,8 @@ function runTestSuite(testSuitePath: string, document: vscode.TextDocument, sugg
 
 		runner.on('end', () => {
 			Object.keys(failingTests).forEach(testedFunctionName => {
-				if (testedFunctionName !== undefined) {
-					code.generateVariations(testSuitePath, testedFunctionName, document, suggestionActionProvider);
+				if (testedFunctionName !== undefined && filePath !== null) {
+					code.generateVariations(filePath[0], testedFunctionName, document);
 				}
 			});
 
