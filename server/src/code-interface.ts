@@ -45,6 +45,7 @@ const comparisonOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.GreaterThanToken]: '>'
 };
 
+// TODO: Find alternative to Test PASS and FAIL Decoration
 /* const passDecorationType = vscode.window.createTextEditorDecorationType({
 	after: {
 		contentText: ' // passed',
@@ -59,21 +60,57 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 	}
 }); */
 
+/* function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
+	let documentText: string = editor.document.getText();
+	let documentLines: string[] = documentText.split('\n');
+	let testLines: number[] = [];
+	let testRegex = /it\((\'|\").*(\'|\")/;
+
+	for (let lineIndex = 0; lineIndex < documentLines.length; lineIndex++) {
+		let match = documentLines[lineIndex].match(testRegex);
+
+		if (match !== null && match.index !== undefined) {
+			testLines.push(lineIndex);
+		}
+	}
+
+	let passDecorationsArray: DecorationOptions[] = [];
+	let failDecorationsArray: DecorationOptions[] = [];
+    
+	for (let testIndex = 0; testIndex < testResults.length; testIndex++) {
+		let lineIndex: number = testLines[testIndex];
+		let line: string = documentLines[lineIndex];
+
+		let range = new Range(
+			new Position(lineIndex, line.length),
+			new Position(lineIndex, line.length)
+		);
+
+		if (testResults[testIndex].passed) {
+			passDecorationsArray.push({range});
+		} else {
+			failDecorationsArray.push({range});
+		}
+
+		editor.setDecorations(passDecorationType, passDecorationsArray);
+		editor.setDecorations(failDecorationType, failDecorationsArray);
+	}
+} */
+
 function generateVariations(filePath: string, functionName: string, document: TextDocument) {
-	console.log(filePath);
 	const originalFileContent: string = readFileSync(filePath).toString();
 	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
 	let replacementList: Replacement[] = new Array();
 	visitDoReplacements(functionNode!, replacementList);
 
-	console.log(3);
-    
 	for (let index = 0; index < replacementList.length; index++) {
 		const variation: string = replaceLines(originalFileContent, replacementList[index]);
-		//const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}${index}.ts`;
-		//writeFileSync(variationFileName, variation);
-		//runTest(variationFileName, document, [replacementList[index]], functionName);
-		console.log(filePath);		
+		const variationFileName: string = `${__dirname}\\tmp${functionName}${index}.ts`;
+		writeFileSync(variationFileName, variation);
+
+		// TODO: Insert a visual cue of progress
+
+		runTest(variationFileName, document, [replacementList[index]], functionName);
 	}
 
 	replacementList = [];
@@ -82,9 +119,12 @@ function generateVariations(filePath: string, functionName: string, document: Te
 	const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
 	for (let index = 0; index < switchExpressionsVariations.length; index++) {
 		const variation: string = switchExpressionsVariations[index];
-		//const variationFileName: string = `${vscode.workspace.workspaceFolders !== undefined ? vscode.workspace.workspaceFolders[0].uri.fsPath : '/home'}/tmp${functionName}switch${index}.ts`;
-		//writeFileSync(variationFileName, variation);
-		//runTest(variationFileName, document, [replacementList[index]], functionName);
+		const variationFileName: string = `${__dirname}\\tmp${functionName}switch${index}.ts`;
+		writeFileSync(variationFileName, variation);
+
+		// TODO: Insert a visual cue of progress
+
+		runTest(variationFileName, document, [replacementList[index]], functionName);
 	}
 }
 
@@ -222,44 +262,6 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 function suggestChanges(document: TextDocument, replacementList: Replacement[]) {
 	suggestChangesLint(document, replacementList);
 }
-
-
-/* function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
-	let documentText: string = editor.document.getText();
-	let documentLines: string[] = documentText.split('\n');
-	let testLines: number[] = [];
-	let testRegex = /it\((\'|\").*(\'|\")/;
-
-	for (let lineIndex = 0; lineIndex < documentLines.length; lineIndex++) {
-		let match = documentLines[lineIndex].match(testRegex);
-
-		if (match !== null && match.index !== undefined) {
-			testLines.push(lineIndex);
-		}
-	}
-
-	let passDecorationsArray: DecorationOptions[] = [];
-	let failDecorationsArray: DecorationOptions[] = [];
-    
-	for (let testIndex = 0; testIndex < testResults.length; testIndex++) {
-		let lineIndex: number = testLines[testIndex];
-		let line: string = documentLines[lineIndex];
-
-		let range = new Range(
-			new Position(lineIndex, line.length),
-			new Position(lineIndex, line.length)
-		);
-
-		if (testResults[testIndex].passed) {
-			passDecorationsArray.push({range});
-		} else {
-			failDecorationsArray.push({range});
-		}
-
-		editor.setDecorations(passDecorationType, passDecorationsArray);
-		editor.setDecorations(failDecorationType, failDecorationsArray);
-	}
-} */
 
 function getTSNodeText(node: ts.Node): string {
 	const tempSourceFile: ts.SourceFile = ts.createSourceFile('temp.js', '', ts.ScriptTarget.Latest, true);
