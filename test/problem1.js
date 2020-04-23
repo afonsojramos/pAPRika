@@ -11,7 +11,7 @@ A substring of "This is a string" is "is"
 */
 
 function mySubstring(str, i1, i2) {
-	return str.substring(i1, i2 + 1);
+	return str.substring(i1, i2);
 }
 
 describe('mySubstring', function () {
