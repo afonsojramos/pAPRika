@@ -97,7 +97,7 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 	}
 } */
 
-function generateVariations(filePath: string, functionName: string, document: TextDocument) {
+function generateVariations(filePath: string, functionName: string, document: TextDocument, suggestionProvider: SugestionProvider) {
 	const originalFileContent: string = readFileSync(filePath).toString();
 	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
 	let replacementList: Replacement[] = new Array();
@@ -110,7 +110,7 @@ function generateVariations(filePath: string, functionName: string, document: Te
 
 		// TODO: Insert a visual cue of progress
 
-		runTest(variationFileName, document, [replacementList[index]], functionName);
+		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider);
 	}
 
 	replacementList = [];
@@ -124,7 +124,7 @@ function generateVariations(filePath: string, functionName: string, document: Te
 
 		// TODO: Insert a visual cue of progress
 
-		runTest(variationFileName, document, [replacementList[index]], functionName);
+		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider);
 	}
 }
 

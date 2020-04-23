@@ -13,7 +13,7 @@ interface TestResultObject {
     'passed': boolean;
 }
 
-function runTestSuite(testSuitePath: string, document: TextDocument) {
+function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {
 	let mocha: Mocha = new Mocha();
 	let filePath: RegExpMatchArray | null;
 	filePath = testSuitePath.match('[^\/]*.js$');
@@ -38,7 +38,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument) {
 				'passed': false
 			});
             
-			const testedFunctionName: string | undefined = code.getTestedFunctionName(test);
+			const testedFunctionName: string | undefined = getTestedFunctionName(test);
 
 			if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
 				failingTests[testedFunctionName].push(test);
@@ -56,8 +56,8 @@ function runTestSuite(testSuitePath: string, document: TextDocument) {
 
 		runner.on('end', () => {
 			Object.keys(failingTests).forEach(testedFunctionName => {
-				if (testedFunctionName !== undefined && filePath !== null) {
-					code.generateVariations(filePath[0], testedFunctionName, document);
+				if (testedFunctionName !== undefined) {
+					generateVariations(filePath, testedFunctionName, document, suggestionProvider);
 				}
 			});
 
@@ -72,7 +72,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument) {
 	}
 }
 
-function runTest(testSuitePath: string, document: TextDocument, replacements: Replacement[], functionName: string): void{
+function runTest(testSuitePath: string, document: TextDocument, replacements: Replacement[], functionName: string, suggestionProvider: SuggestionProvider): void {
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
 	mocha.fgrep(functionName);
@@ -93,7 +93,7 @@ function runTest(testSuitePath: string, document: TextDocument, replacements: Re
 
 		runner.on('end', () => {
 			if (failingTestsList.length === 0) {
-				code.suggestChanges(document, replacements);
+				suggestionProvider.suggestChanges(document, replacements);
 			}
 
 			unlinkSync(testSuitePath);
