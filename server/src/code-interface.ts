@@ -1,12 +1,12 @@
-import * as ts from 'typescript';
 import { readFileSync, writeFileSync } from 'fs';
-import { runTest, TestResultObject } from './test-runner';
+import * as ts from 'typescript';
+import { TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
-import { TextEdit, TextDocument, Position } from 'vscode-languageserver';
-import { suggestChangesLint } from './suggestion-provider';
+import SugestionProvider from './suggestion-provider';
+import { runTest } from './test-runner';
 
 interface SyntaxKindToTextMap {
-    [key: number]: string;
+	[key: number]: string;
 }
 
 const mathOperators: number[] = [
@@ -151,7 +151,7 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 	ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList));
 }
 
-function switchExpressions(fileText:  string, functionText: string, replacementList: Replacement[]): string[] {
+function switchExpressions(fileText: string, functionText: string, replacementList: Replacement[]): string[] {
 	const functionLines: string[] = functionText.split('\n');
 	const functionStartPos: number = fileText.indexOf(functionText);
 	let variations: string[] = [];
@@ -239,7 +239,7 @@ function replaceLines(originalFile: string, replacement: Replacement): string {
 	return newFile;
 }
 
-function getTestedFunctionName(test: Mocha.Test): string | undefined { 
+function getTestedFunctionName(test: Mocha.Test): string | undefined {
 	const testTitle: string = test.title;
 	const regex: RegExp = new RegExp(/(?<=#fix\s*{).*(?=})/);
 	const results: RegExpExecArray | null = regex.exec(testTitle);
@@ -255,12 +255,8 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 	const sourceFile: ts.SourceFile = ts.createSourceFile('tmpDeclaration.ts', readFileSync(filePath).toString(), ts.ScriptTarget.Latest, true);
 	const syntaxList: ts.Node = sourceFile.getChildAt(0);
 	const functionDeclarations: ts.FunctionDeclaration[] = syntaxList.getChildren().filter(ts.isFunctionDeclaration);
-    
-	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode));
-}
 
-function suggestChanges(document: TextDocument, replacementList: Replacement[]) {
-	suggestChangesLint(document, replacementList);
+	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode));
 }
 
 function getTSNodeText(node: ts.Node): string {
@@ -282,9 +278,5 @@ function syntaxKindToName(kind: ts.SyntaxKind): string {
 	return (<any>ts).SyntaxKind[kind];
 }
 
-export {
-	generateVariations,
-	getTestedFunctionName,
-	getFunctionDeclaration,
-	suggestChanges
-};
+export { generateVariations, getTestedFunctionName, getFunctionDeclaration };
+

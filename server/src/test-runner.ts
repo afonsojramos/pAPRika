@@ -1,16 +1,17 @@
 import { unlinkSync } from 'fs';
 import * as Mocha from 'mocha';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import * as code from './code-interface';
+import { generateVariations, getTestedFunctionName } from './code-interface';
 import Replacement from './replacement';
+import SuggestionProvider from './suggestion-provider';
 
 interface TestListMap {
-    [key: string]: Mocha.Test[];
+	[key: string]: Mocha.Test[];
 }
 
 interface TestResultObject {
-    'test': Mocha.Test;
-    'passed': boolean;
+	'test': Mocha.Test;
+	'passed': boolean;
 }
 
 function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {

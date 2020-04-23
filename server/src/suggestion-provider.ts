@@ -1,7 +1,7 @@
-import { Diagnostic, DiagnosticSeverity, TextDocument, Range, CodeActionContext, CodeAction, CancellationToken, Command, Connection } from 'vscode-languageserver';
+import { CancellationToken, CodeAction, CodeActionContext, Command, Connection, Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
 
-export default class SuggestionProvider{
+export default class SuggestionProvider {
 	private connection: Connection;
 
 	constructor(connection: Connection) {
@@ -46,13 +46,13 @@ export default class SuggestionProvider{
 		let to: string = document.getText(range).replace(/\s/g, '');
 		if (from === to) {
 			let newText = /[\s\S]*==>\s([\s\S]*)/g.exec(message)![1];
-		/* let edit = new WorkspaceEdit();
-		edit.replace(document.uri, range, newText);
-		this.diagnosticCollection.clear();
-		return vscode.workspace.applyEdit(edit); */
+			/* let edit = new WorkspaceEdit();
+			edit.replace(document.uri, range, newText);
+			this.diagnosticCollection.clear();
+			return vscode.workspace.applyEdit(edit); */
 		} else {
-		/* vscode.window.showErrorMessage('The suggestion was not applied because the source code changed.');
-		this.diagnosticCollection.clear(); */
+			/* vscode.window.showErrorMessage('The suggestion was not applied because the source code changed.');
+			this.diagnosticCollection.clear(); */
 		}
 	}
 }
