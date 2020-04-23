@@ -17,13 +17,14 @@ function runTestSuite(testSuitePath: string, document: TextDocument) {
 	let mocha: Mocha = new Mocha();
 	let filePath: RegExpMatchArray | null;
 	filePath = testSuitePath.match('[^\/]*.js$');
-	if (filePath === null)	{return;}
+	if (filePath === null)	{ console.error('File Path not found'); return; }
 
 	mocha.addFile(filePath[0]);
 	console.log('Mocha added file: ' + filePath[0]);
 
 	// see https://github.com/mochajs/mocha/issues/2783
-	delete require.cache[require.resolve(testSuitePath)];
+	// Not working on second run
+	delete require.cache[filePath[0]];
 
 	try {
 		let runner: Mocha.Runner = mocha.run();
@@ -60,18 +61,18 @@ function runTestSuite(testSuitePath: string, document: TextDocument) {
 				}
 			});
 
-			const openEditor = vscode.window.visibleTextEditors.filter(
+			/* const openEditor = vscode.window.visibleTextEditors.filter(
 				editor => editor.document.uri === document.uri
-			)[0];
+			)[0]; */
 
-			code.decorate(openEditor, testResults);
+			//code.decorate(openEditor, testResults);
 		});
 	} catch (err) {
 		console.log(err);
 	}
 }
 
-function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, replacements: Replacement[], suggestionActionProvider: SuggestionActionProvider, functionName: string): void{
+function runTest(testSuitePath: string, document: TextDocument, replacements: Replacement[], functionName: string): void{
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
 	mocha.fgrep(functionName);
@@ -92,7 +93,7 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
 
 		runner.on('end', () => {
 			if (failingTestsList.length === 0) {
-				code.suggestChanges(document, replacements, suggestionActionProvider);
+				code.suggestChanges(document, replacements);
 			}
 
 			unlinkSync(testSuitePath);
@@ -104,9 +105,4 @@ function runTestSuiteOnce(testSuitePath: string, document: vscode.TextDocument, 
 	}
 }
 
-export {
-	TestResultObject,
-	getCompletePath,
-	runTestSuite,
-	runTestSuiteOnce
-};
+export { TestResultObject, runTestSuite, runTest };
