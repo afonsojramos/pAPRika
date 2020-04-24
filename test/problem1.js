@@ -21,6 +21,5 @@ describe('mySubstring', function () {
 
 	it('#fix {mySubstring}', function () {
 		assert.equal(mySubstring('This is a string', 6, 8), 's a');
-		
 	});
 });
