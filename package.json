@@ -56,13 +56,18 @@
 		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
 		"test": "sh ./scripts/e2e.sh"
 	},
+	"dependencies": {
+		"mocha": "^6.2.3",
+		"fast-check": "^1.24.1",
+		"typescript": "^3.8.3"
+	},
 	"devDependencies": {
 		"@types/mocha": "^5.2.7",
 		"@types/node": "^12.11.7",
 		"@typescript-eslint/parser": "^2.3.0",
 		"eslint": "^6.4.0",
 		"fast-check": "^1.24.1",
-		"mocha": "^6.2.2",
+		"mocha": "^6.2.3",
 		"typescript": "^3.8.3"
 	}
 }
