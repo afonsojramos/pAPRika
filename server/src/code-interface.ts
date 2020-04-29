@@ -103,29 +103,30 @@ function generateVariations(filePath: string, functionName: string, document: Te
 	let replacementList: Replacement[] = new Array();
 	visitDoReplacements(functionNode!, replacementList);
 
-	for (let index = 0; index < replacementList.length; index++) {
-		const variation: string = replaceLines(originalFileContent, replacementList[index]);
+	replacementList.map((replacement, index) => {
+		const variation: string = replaceLines(originalFileContent, replacement);
 		const variationFileName: string = `${__dirname}\\tmp${functionName}${index}.ts`;
 		writeFileSync(variationFileName, variation);
 
 		// TODO: Insert a visual cue of progress
 
-		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider);
-	}
+		runTest(variationFileName, document, [replacement], functionName, suggestionProvider);
+	});
 
 	replacementList = [];
 
 	const originalFunction: string = functionNode!.getText();
 	const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
-	for (let index = 0; index < switchExpressionsVariations.length; index++) {
-		const variation: string = switchExpressionsVariations[index];
+	
+	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
+		const variation: string = switchExpressionsVariation;
 		const variationFileName: string = `${__dirname}\\tmp${functionName}switch${index}.ts`;
 		writeFileSync(variationFileName, variation);
 
 		// TODO: Insert a visual cue of progress
 
 		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider);
-	}
+	});
 }
 
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
