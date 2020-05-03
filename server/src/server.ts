@@ -4,14 +4,19 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { CompletionItem, CompletionItemKind, Connection, createConnection, Diagnostic, DiagnosticSeverity, DidChangeConfigurationNotification, InitializeParams, InitializeResult, ProposedFeatures, TextDocumentPositionParams, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import { TextDocument, DocumentUri } from 'vscode-languageserver-textdocument';
 import { runTestSuite } from './test-runner';
 import SuggestionProvider from './suggestion-provider';
+import ts = require('typescript');
+const Path = require('path');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection: Connection = createConnection(ProposedFeatures.all);
+
+// Saved connection to Suggestion Provider for Diagnostics Sending
 let suggestionProvider = new SuggestionProvider(connection);
+let rootUri: DocumentUri;
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -23,6 +28,7 @@ let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
+	params.rootUri && (rootUri = params.rootUri);
 
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
@@ -126,9 +132,12 @@ documents.onDidChangeContent(change => {
 documents.onDidSave(documentEvent => {
 	//suggestionActionProvider.cleanSuggestions();
 		
-	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
-	if (testSuitePath !== undefined) {
-		console.log('Saved:', testSuitePath);
+	let documentPath: string | undefined = documentEvent.document.uri;
+	let relativePath = Path.relative(rootUri, documentPath);
+	let testSuitePath = rootUri ? relativePath : documentPath;
+
+	if (documentPath !== undefined) {
+		console.info('Saved:', testSuitePath);
 		runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 	}
 });
@@ -139,7 +148,7 @@ documents.onDidOpen(documentEvent => {
 	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
 	if (testSuitePath !== undefined) {
 		//runTestSuite(testSuitePath, documentEvent.document);
-		console.log('Opened:', testSuitePath);
+		console.info('Opened:', testSuitePath);
 	}
 });
 

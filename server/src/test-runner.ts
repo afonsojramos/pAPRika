@@ -16,16 +16,13 @@ interface TestResultObject {
 
 function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {
 	let mocha: Mocha = new Mocha();
-	let filePath: string;
-	filePath = testSuitePath.replace(/^.*[\\\/]/, '');
-
-	mocha.addFile(filePath);
-
-	console.log('Mocha added file: ' + filePath);
+	mocha.addFile(testSuitePath);
+	console.info('Mocha added file: ' + testSuitePath.replace(/^.*[\\\/]/, ''));
 
 	// see https://github.com/mochajs/mocha/issues/2783
 	// Not working on second run
-	delete require.cache[__dirname + '\\' + filePath];
+	// To be Solved in https://github.com/mochajs/mocha/pull/4234
+	delete require.cache[document.uri];
 
 	try {
 		let runner: Mocha.Runner = mocha.run();
@@ -58,7 +55,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 		runner.on('end', () => {
 			Object.keys(failingTests).forEach(testedFunctionName => {
 				if (testedFunctionName !== undefined) {
-					generateVariations(filePath, testedFunctionName, document, suggestionProvider);
+					generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider);
 				}
 			});
 
