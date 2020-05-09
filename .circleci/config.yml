@@ -5,6 +5,7 @@ jobs:
       docker:
         - image: circleci/node:lts
       steps:
+        - checkout
         - run:
             command: npm install
   build-website:
