@@ -1,0 +1,33 @@
+version: 2.1
+orbs:
+  node: circleci/node:latest
+jobs:
+  build:
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/with-cache:
+          steps:
+            - run: npm install
+  compile-web:
+    executor: 
+      name: node/default
+    steps:
+      - cd pAPRika
+      - npm install -g firebase-tools
+      - bundle exec jekyll build --verbose
+
+workflows:
+    build:
+      jobs:
+        - build
+        - compile-web
+
+deployment:
+  production:
+    branch: master
+    requires:
+      - compile-web
+    commands:
+      - firebase deploy --token=$FIREBASE_TOKEN --non-interactive
