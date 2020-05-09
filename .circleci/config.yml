@@ -30,9 +30,9 @@ jobs:
             bundle exec htmlproofer ./_site --allow-hash-href --check-html --disable-external --url-ignore "/firebase/"
           working_directory: ~/pAPRika/pAPRika
       - persist_to_workspace:
-          root: ~/pAPRika/pAPRika/
+          root: ~/pAPRika/
           paths:
-            - _site
+            - pAPRika
   deploy-website:
     docker:
       - image: circleci/node:lts
@@ -43,15 +43,15 @@ jobs:
           at: ~/pAPRika/pAPRika/
       - run:
           command: ls
-          working_directory: ~/pAPRika/pAPRika
+          working_directory: ~/pAPRika
       - run:
           name: NPM install
           command: npm install
-          working_directory: ~/pAPRika/pAPRika
+          working_directory: ~/pAPRika
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
-          working_directory: ~/pAPRika/pAPRika
+          working_directory: ~/pAPRika
 
 workflows:
   version: 2
