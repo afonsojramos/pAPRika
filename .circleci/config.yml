@@ -11,10 +11,9 @@ jobs:
   build-website:
     docker:
       - image: circleci/ruby:latest
+    working_directory: ~/pAPRika/pAPRika
     steps:
       - checkout
-      - run:
-          command: cd pAPRika
       - run:
           name: Bundle Install
           command: bundle check || bundle install
@@ -36,9 +35,8 @@ jobs:
   deploy-website:
     docker:
       - image: circleci/node:lts
+    working_directory: ~/pAPRika/pAPRika
     steps:
-      - run:
-          command: cd pAPRika
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
