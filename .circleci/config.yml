@@ -11,7 +11,7 @@ jobs:
   build-website:
     docker:
       - image: circleci/ruby:latest
-    working_directory: ~/pAPRika/pAPRika
+    working_directory: ~/project/pAPRika
     steps:
       - checkout
       - run:
@@ -35,7 +35,7 @@ jobs:
   deploy-website:
     docker:
       - image: circleci/node:lts
-    working_directory: ~/pAPRika/pAPRika
+    working_directory: ~/project/pAPRika
     steps:
       - run:
           name: Deploy Master to Firebase
