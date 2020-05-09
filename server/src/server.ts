@@ -46,7 +46,7 @@ connection.onInitialize((params: InitializeParams) => {
 
 	const result: InitializeResult = {
 		capabilities: {
-			textDocumentSync: TextDocumentSyncKind.Full,
+			textDocumentSync: TextDocumentSyncKind.Incremental,
 			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: true
@@ -131,7 +131,7 @@ documents.onDidChangeContent(change => {
 
 documents.onDidSave(documentEvent => {
 	//suggestionActionProvider.cleanSuggestions();
-		
+
 	let documentPath: string | undefined = documentEvent.document.uri;
 	let relativePath = Path.relative(rootUri, documentPath);
 	let testSuitePath = rootUri ? relativePath : documentPath;
@@ -144,8 +144,8 @@ documents.onDidSave(documentEvent => {
 
 documents.onDidOpen(documentEvent => {
 	//suggestionActionProvider.cleanSuggestions();
-		
-	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A',':');
+
+	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A', ':');
 	if (testSuitePath !== undefined) {
 		//runTestSuite(testSuitePath, documentEvent.document);
 		console.info('Opened:', testSuitePath);
@@ -239,29 +239,6 @@ connection.onCompletionResolve(
 		return item;
 	}
 );
-
-/*
-connection.onDidOpenTextDocument((params) => {
-	// A text document got opened in VSCode.
-	// params.textDocument.uri uniquely identifies the document. For documents store on disk this is a file URI.
-	// params.textDocument.text the initial full content of the document.
-	connection.console.log(`${params.textDocument.uri} opened.`);
-});
-connection.onDidChangeTextDocument((params) => {
-	// The content of a text document did change in VSCode.
-	// params.textDocument.uri uniquely identifies the document.
-	// params.contentChanges describe the content changes to the document.
-	connection.console.log(`${params.textDocument.uri} changed: ${JSON.stringify(params.contentChanges)}`);
-});
-connection.onDidSaveTextDocument((params) => {
-	console.log('Saved Text Doc');
-});
-connection.onDidCloseTextDocument((params) => {
-	// A text document got closed in VSCode.
-	// params.textDocument.uri uniquely identifies the document.
-	connection.console.log(`${params.textDocument.uri} closed.`);
-});
-*/
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
