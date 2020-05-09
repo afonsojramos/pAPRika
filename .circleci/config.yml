@@ -26,11 +26,7 @@ jobs:
       - run:
           name: HTMLProofer tests
           command: |
-            bundle exec htmlproofer ./_site \
-              --allow-hash-href \
-              --check-favicon  \
-              --check-html \
-              --disable-external
+            bundle exec htmlproofer ./_site --allow-hash-href --check-html --disable-external --url-ignore "/firebase/"
           working_directory: ~/pAPRika/pAPRika
       - persist_to_workspace:
           root: ./
