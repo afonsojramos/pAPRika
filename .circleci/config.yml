@@ -7,17 +7,32 @@ jobs:
       steps:
         - checkout
         - run:
-            command: |
-              npm install
+            command: npm install
   build-website:
     docker:
-      - image: circleci/node:lts
+      - image: circleci/ruby:latest
     steps:
       - checkout
       - run:
           command: cd pAPRika
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
       - run: 
+          name: Bundle Build
           command: bundle exec jekyll build --verbose
+      - run:
+          name: HTMLProofer tests
+          command: |
+            bundle exec htmlproofer ./_site \
+              --allow-hash-href \
+              --check-favicon  \
+              --check-html \
+              --disable-external
+      - persist_to_workspace:
+          root: ./
+          paths:
+            - _site
   deploy-website:
     docker:
       - image: circleci/node:lts
