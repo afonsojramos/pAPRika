@@ -29,9 +29,9 @@ jobs:
             bundle exec htmlproofer ./_site --allow-hash-href --check-html --disable-external --url-ignore "/firebase/"
           working_directory: ~/pAPRika/pAPRika
       - persist_to_workspace:
-          root: ./
+          root: ~/pAPRika/pAPRika/
           paths:
-            - ~/pAPRika/pAPRika/_site
+            - _site
   deploy-website:
     docker:
       - image: circleci/node:lts
