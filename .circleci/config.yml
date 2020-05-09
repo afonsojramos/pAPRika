@@ -8,6 +8,7 @@ jobs:
       steps:
         - checkout
         - run:
+            name: NPM install
             command: npm install
   build-website:
     docker:
@@ -36,6 +37,15 @@ jobs:
     docker:
       - image: circleci/node:lts
     steps:
+      - run:
+          command: ls
+      - attach_workspace:
+          at: ~/pAPRika/pAPRika/
+      - run:
+          command: ls
+      - run:
+          name: NPM install
+          command: npm install
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
