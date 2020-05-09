@@ -9,7 +9,7 @@
 - Live code suggestions
 - Myriad of fault detection
 
-![pAPRika v0.0.1](/pAPRika/assets/pAPRika-v0.0.1.gif)
+![pAPRika v0.0.1](pAPRika/assets/pAPRika-v0.1.gif)
 
 ## Structure
 
@@ -59,7 +59,7 @@ Lacks the. -->
 
 ## Release Notes
 
-### 0.0.1
+### 0.1
 
 The initial release of pAPRika without Property-Based Testing.
 
