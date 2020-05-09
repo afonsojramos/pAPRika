@@ -14,7 +14,7 @@ jobs:
     steps:
       - run:
           name: Bundle Install
-          command: bundle check || bundle install
+          command: ls && bundle check || bundle install
       - run: 
           name: Bundle Build
           command: bundle exec jekyll build --verbose
