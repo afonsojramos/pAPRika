@@ -13,8 +13,10 @@ jobs:
     working_directory: ~/pAPRika
     steps:
       - run:
+          command: ls
+      - run:
           name: Bundle Install
-          command: ls && bundle check || bundle install
+          command: bundle check || bundle install
       - run: 
           name: Bundle Build
           command: bundle exec jekyll build --verbose
