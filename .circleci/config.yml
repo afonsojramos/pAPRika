@@ -5,7 +5,6 @@ jobs:
       docker:
         - image: circleci/node:lts
       steps:
-        - checkout
         - run:
             command: npm install
   build-website:
@@ -13,7 +12,6 @@ jobs:
       - image: circleci/ruby:latest
     working_directory: ~/project/pAPRika
     steps:
-      - checkout
       - run:
           name: Bundle Install
           command: bundle check || bundle install
