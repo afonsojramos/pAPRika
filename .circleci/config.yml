@@ -17,8 +17,6 @@ jobs:
       - run:
           command: cd pAPRika
       - run: 
-          command: npm install -g firebase-tools
-      - run: 
           command: bundle exec jekyll build --verbose
   deploy-website:
     docker:
