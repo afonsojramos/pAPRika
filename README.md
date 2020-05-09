@@ -1,6 +1,6 @@
-# ProperFix
+# pAPRika
 
-ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `Fix` small faults in your code.
+**pAPRika** is a Property-Based Automatic Program Repair tool that attempts to Fix small faults in your code.
 
 ## Features
 
@@ -9,7 +9,7 @@ ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `
 - Live code suggestions
 - Myriad of fault detection
 
-![ProperFix v0.0.1](/assets/properfix-v0.0.1.gif)
+![pAPRika v0.0.1](/pAPRika/assets/pAPRika-v0.0.1.gif)
 
 ## Structure
 
@@ -57,11 +57,11 @@ Lacks the. -->
   - Type `j` or `t` to see `Javascript` and `TypeScript` completion.
   - Enter text content such as `AAA aaa BBB`. The extension will emit diagnostics for all words in all-uppercase.
 
-<!-- ## Release Notes
+## Release Notes
 
 ### 0.0.1
 
-The initial release of ProperFix without Property-Based Testing. -->
+The initial release of pAPRika without Property-Based Testing.
 
 ***Enjoy!***
 

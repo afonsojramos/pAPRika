@@ -19,7 +19,7 @@ export default class SuggestionProvider {
 					end: textDocument.positionAt(replacement.end)
 				},
 				message: 'Replace: ' + replacement.oldText + ' ==> ' + replacement.newText,
-				source: 'ProperFix'
+				source: 'pAPRika'
 			};
 			diagnostics.push(diagnostic);
 		});
@@ -33,7 +33,7 @@ export default class SuggestionProvider {
 			return {
 				title: 'Accept code suggestion',
 				//command: commandId,
-				command: Command.create('ProperFix', 'extension.runCodeAction'),
+				command: Command.create('pAPRika', 'extension.runCodeAction'),
 				arguments: [document, diagnostic.range, diagnostic.message]
 			};
 		});

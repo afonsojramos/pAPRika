@@ -1,16 +1,16 @@
 {
-	"name": "properfix",
-	"displayName": "ProperFix",
+	"name": "paprika",
+	"displayName": "pAPRika",
 	"description": "Property-Based Automatic Program Repair made easy",
 	"author": "afonsojramos",
 	"license": "MIT",
 	"version": "0.0.1",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/afonsojramos/ProperFix"
+		"url": "https://github.com/afonsojramos/pAPRika"
 	},
 	"publisher": "afonsojramos",
-	"icon": "assets/ProperFix.png",
+	"icon": "pAPRika/assets/pAPRika.png",
 	"categories": [
 		"Other"
 	],

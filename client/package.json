@@ -1,13 +1,13 @@
 {
-	"name": "properfix-client",
-	"description": "ProperFix Client",
+	"name": "paprika-client",
+	"description": "pAPRika Client",
 	"author": "afonsojramos",
 	"license": "MIT",
 	"version": "0.0.1",
 	"publisher": "vscode",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/afonsojramos/ProperFix"
+		"url": "https://github.com/afonsojramos/pAPRika"
 	},
 	"engines": {
 		"vscode": "^1.43.0"
