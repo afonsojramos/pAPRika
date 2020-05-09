@@ -5,4 +5,6 @@ date:   2020-05-08 23:26:25 +0100
 categories: releases
 ---
 
-This is the first public release of the pAPRika tool.
+This is the first release of the pAPRika tool.
+
+The tool itself will be made available soon!

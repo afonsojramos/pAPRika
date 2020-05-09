@@ -14,9 +14,11 @@ layout: single # splash
 
 <!-- List with gifs for each feature example: https://github.com/James-Yu/LaTeX-Workshop -->
 
-- Live code suggestions
+- Live (real-time) code suggestions
 - Myriad of fault detection
 
 ![pAPRika v0.0.1](/assets/pAPRika-v0.1.gif)
 
-Download [pAPRika tests](/assets/paprika-tests.zip)
+Download [pAPRika tests](/assets/paprika-tests.zip)!
+
+This extension and its source code will be made available afterwards to ensure the peer review process is double-blind.
