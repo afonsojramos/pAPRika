@@ -43,15 +43,15 @@ jobs:
           at: ~/pAPRika
       - run:
           command: ls
-          working_directory: ~/pAPRika
+          working_directory: ~/pAPRika/pAPRika
       - run:
           name: NPM install
           command: npm install
-          working_directory: ~/pAPRika
+          working_directory: ~/pAPRika/pAPRika
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
-          working_directory: ~/pAPRika
+          working_directory: ~/pAPRika/pAPRika
 
 workflows:
   version: 2
