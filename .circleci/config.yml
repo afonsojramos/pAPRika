@@ -4,6 +4,7 @@ jobs:
   build-extension:
       docker:
         - image: circleci/node:lts
+      working_directory: ~/pAPRika
       steps:
         - checkout
         - run:
@@ -11,15 +12,17 @@ jobs:
   build-website:
     docker:
       - image: circleci/ruby:latest
+    working_directory: ~/pAPRika
     steps:
-      - run:
-          command: cd pAPRika && ls
+      - checkout
       - run:
           name: Bundle Install
           command: bundle check || bundle install
+          working_directory: ~/pAPRika/pAPRika
       - run: 
           name: Bundle Build
           command: bundle exec jekyll build --verbose
+          working_directory: ~/pAPRika/pAPRika
       - run:
           name: HTMLProofer tests
           command: |
@@ -28,6 +31,7 @@ jobs:
               --check-favicon  \
               --check-html \
               --disable-external
+          working_directory: ~/pAPRika/pAPRika
       - persist_to_workspace:
           root: ./
           paths:
