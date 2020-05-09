@@ -31,7 +31,7 @@ jobs:
       - persist_to_workspace:
           root: ./
           paths:
-            - _site
+            - ~/pAPRika/pAPRika/_site
   deploy-website:
     docker:
       - image: circleci/node:lts
@@ -39,6 +39,7 @@ jobs:
       - run:
           name: Deploy Master to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
+          working_directory: ~/pAPRika/pAPRika
 
 workflows:
   version: 2
