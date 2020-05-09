@@ -40,7 +40,7 @@ jobs:
       - run:
           command: ls
       - attach_workspace:
-          at: ~/pAPRika/pAPRika/
+          at: ~/pAPRika
       - run:
           command: ls
           working_directory: ~/pAPRika
