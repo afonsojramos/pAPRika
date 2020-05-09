@@ -1,33 +1,40 @@
 version: 2.1
-orbs:
-  node: circleci/node:lts
+
 jobs:
-  build:
-    executor:
-      name: node/default
+  build-extension:
+      docker:
+        - image: circleci/node:lts
+      steps:
+        - checkout
+        - run:
+            command: |
+              npm install
+  build-website:
+    docker:
+      - image: circleci/node:lts
+    working_directory: /pAPRika
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-  compile-web:
-    executor: 
-      name: node/default
+      - run: 
+          command: npm install -g firebase-tools
+      - run: 
+          command: bundle exec jekyll build --verbose
+  deploy-website:
+    docker:
+      - image: circleci/node:lts
+    working_directory: /pAPRika
     steps:
-      - cd pAPRika
-      - npm install -g firebase-tools
-      - bundle exec jekyll build --verbose
+      - run:
+          name: Deploy Master to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
 
 workflows:
-    build:
-      jobs:
-        - build
-        - compile-web
-
-deployment:
-  production:
-    branch: master
-    requires:
-      - compile-web
-    commands:
-      - firebase deploy --token=$FIREBASE_TOKEN --non-interactive
+  version: 2
+  
+  ci:
+    jobs:
+      - build-extension
+      - build-website
+      - deploy-website:
+          requires:
+            - build-website
