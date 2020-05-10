@@ -8,7 +8,7 @@ layout: single # splash
 
 # pAPRika
 
-**pAPRika** is a Property-Based Automatic Program Repair tool that attempts to Fix small faults in your code.
+**pAPRika** is an Automatic Program Repair tool that attempts to Fix small faults in your code.
 
 ## Features
 
