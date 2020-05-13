@@ -5,17 +5,16 @@
 layout: single # splash
 ---
 
+# p<span style="color:#c10301">APR</span>ika
 
-# pAPRika
-
-**pAPRika** is an Automatic Program Repair tool that attempts to Fix small faults in your code.
+**p<span style="color:#c10301">APR</span>ika** is an Automatic Program Repair tool that attempts to fix small faults in your code.
 
 ## Features
 
 <!-- List with gifs for each feature example: https://github.com/James-Yu/LaTeX-Workshop -->
 
 - Live (real-time) code suggestions
-- Myriad of fault detection
+- Myriad of fault detection mechanisms
 
 ![pAPRika v0.0.1](/assets/pAPRika-v0.1.gif)
 
