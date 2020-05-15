@@ -25,10 +25,6 @@
         └── server.ts // Language Server entry point
 ```
 
-<!-- ## Requirements
-
-* JavaScript/TypeScript test framework [`mocha`](https://github.com/mochajs/mocha) -->
-
 <!-- ## Extension Settings
 
 Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
