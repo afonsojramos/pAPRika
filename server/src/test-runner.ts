@@ -14,6 +14,15 @@ interface TestResultObject {
 	'passed': boolean;
 }
 
+/**
+ * Runs Mocha over a test suite.
+ * If all tests pass for a funcion, said function is ignored, otherwise, it gets added to a list of failed tests.
+ * Failed tests are then used to generate variations of the tested function.
+ *
+ * @param {string} testSuitePath Path of the original file.
+ * @param {TextDocument} document Original document.
+ * @param {SuggestionProvider} suggestionProvider Code editor suggestion provider.
+ */
 function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
@@ -70,6 +79,18 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 	}
 }
 
+/**
+ * Runs Mocha over a test suite.
+ * Test suite comes from a generated file with possible replacements deriving from a specific function that failed tests within the original file test suite.
+ * Suggests changes if all tests pass for the test suite.
+ * At the end generated file is deleted.
+ *
+ * @param {string} testSuitePath Generated file path.
+ * @param {TextDocument} document Original document.
+ * @param {Replacement[]} replacements List of suggested replacements.
+ * @param {string} functionName Name of function under testing.
+ * @param {SuggestionProvider} suggestionProvider Code editor suggestion provider.
+ */
 function runTest(testSuitePath: string, document: TextDocument, replacements: Replacement[], functionName: string, suggestionProvider: SuggestionProvider): void {
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
