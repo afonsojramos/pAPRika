@@ -8,6 +8,13 @@ export default class SuggestionProvider {
 		this.connection = connection;
 	}
 
+	/**
+	 * Sends suggested changes back to the code editor.
+	 *
+	 * @param {TextDocument} textDocument Document in question.
+	 * @param {Replacement[]} replacementList List of suggested replacements.
+	 * @memberof SuggestionProvider
+	 */
 	public suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
 		let diagnostics: Diagnostic[] = new Array<Diagnostic>();
 
