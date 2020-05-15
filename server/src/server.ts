@@ -8,7 +8,7 @@ import { TextDocument, DocumentUri } from 'vscode-languageserver-textdocument';
 import { runTestSuite } from './test-runner';
 import SuggestionProvider from './suggestion-provider';
 import ts = require('typescript');
-const Path = require('path');
+import { uriToFilePath } from 'vscode-languageserver/lib/files';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -111,7 +111,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'languageServerExample'
+			section: 'pAPRrika'
 		});
 		documentSettings.set(resource, result);
 	}
@@ -130,26 +130,15 @@ documents.onDidChangeContent(change => {
 });
 
 documents.onDidSave(documentEvent => {
-	//suggestionActionProvider.cleanSuggestions();
-
-	let documentPath: string | undefined = documentEvent.document.uri;
-	let relativePath = Path.relative(rootUri, documentPath);
-	let testSuitePath = rootUri ? relativePath : documentPath;
-
-	if (documentPath !== undefined) {
-		console.info('Saved:', testSuitePath);
-		runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
-	}
+	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
+	console.info('Saved:', testSuitePath);
+	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 });
 
 documents.onDidOpen(documentEvent => {
-	//suggestionActionProvider.cleanSuggestions();
-
-	let testSuitePath: string | undefined = documentEvent.document.uri.replace('%3A', ':');
-	if (testSuitePath !== undefined) {
-		//runTestSuite(testSuitePath, documentEvent.document);
-		console.info('Opened:', testSuitePath);
-	}
+	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
+	console.info('Opened:', testSuitePath);
+	testSuitePath !== undefined	&& runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 });
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {

@@ -4,6 +4,7 @@ import { TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
 import SugestionProvider from './suggestion-provider';
 import { runTest } from './test-runner';
+import { dirname } from 'path';
 
 interface SyntaxKindToTextMap {
 	[key: number]: string;
@@ -105,7 +106,7 @@ function generateVariations(filePath: string, functionName: string, document: Te
 
 	replacementList.map((replacement, index) => {
 		const variation: string = replaceLines(originalFileContent, replacement);
-		const variationFileName: string = `${__dirname}\\tmp${functionName}${index}.ts`;
+		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}${index}.ts`;
 		writeFileSync(variationFileName, variation);
 
 		// TODO: Insert a visual cue of progress
@@ -120,7 +121,7 @@ function generateVariations(filePath: string, functionName: string, document: Te
 	
 	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
 		const variation: string = switchExpressionsVariation;
-		const variationFileName: string = `${__dirname}\\tmp${functionName}switch${index}.ts`;
+		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.ts`;
 		writeFileSync(variationFileName, variation);
 
 		// TODO: Insert a visual cue of progress

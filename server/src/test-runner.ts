@@ -29,9 +29,8 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 	console.info('Mocha added file: ' + testSuitePath.replace(/^.*[\\\/]/, ''));
 
 	// see https://github.com/mochajs/mocha/issues/2783
-	// Not working on second run
 	// To be Solved in https://github.com/mochajs/mocha/pull/4234
-	delete require.cache[document.uri];
+	delete require.cache[testSuitePath];
 
 	try {
 		let runner: Mocha.Runner = mocha.run();
@@ -99,14 +98,11 @@ function runTest(testSuitePath: string, document: TextDocument, replacements: Re
 	// see https://github.com/mochajs/mocha/issues/2783
 	delete require.cache[require.resolve(testSuitePath)];
 
-	mocha.reporter('Dot');
-
 	try {
-		let runner: Mocha.Runner = mocha.run();
+		let runner: Mocha.Runner = mocha.reporter('min').run();
 		let failingTestsList: Array<Mocha.Test> = [];
 
 		runner.on('fail', (test: Mocha.Test) => {
-			console.log(test);
 			failingTestsList.push(test);
 		});
 
