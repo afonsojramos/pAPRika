@@ -1,10 +1,10 @@
 import { readFileSync, writeFileSync } from 'fs';
+import { dirname } from 'path';
 import * as ts from 'typescript';
 import { TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
 import SugestionProvider from './suggestion-provider';
 import { runTest } from './test-runner';
-import { dirname } from 'path';
 
 interface SyntaxKindToTextMap {
 	[key: number]: string;

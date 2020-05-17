@@ -3,12 +3,12 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { CompletionItem, CompletionItemKind, Connection, createConnection, Diagnostic, DiagnosticSeverity, DidChangeConfigurationNotification, InitializeParams, InitializeResult, ProposedFeatures, TextDocumentPositionParams, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
-import { TextDocument, DocumentUri } from 'vscode-languageserver-textdocument';
-import { runTestSuite } from './test-runner';
-import SuggestionProvider from './suggestion-provider';
-import ts = require('typescript');
+import { Connection, createConnection, DidChangeConfigurationNotification, InitializeParams, InitializeResult, ProposedFeatures, TextDocumentChangeEvent, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 import { uriToFilePath } from 'vscode-languageserver/lib/files';
+import SuggestionProvider from './suggestion-provider';
+import { runTestSuite } from './test-runner';
+import ts = require('typescript');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -16,7 +16,6 @@ let connection: Connection = createConnection(ProposedFeatures.all);
 
 // Saved connection to Suggestion Provider for Diagnostics Sending
 let suggestionProvider = new SuggestionProvider(connection);
-let rootUri: DocumentUri;
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
@@ -28,7 +27,6 @@ let hasDiagnosticRelatedInformationCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
-	params.rootUri && (rootUri = params.rootUri);
 
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
@@ -53,6 +51,7 @@ connection.onInitialize((params: InitializeParams) => {
 			}
 		}
 	};
+
 	if (hasWorkspaceFolderCapability) {
 		result.capabilities.workspace = {
 			workspaceFolders: {
@@ -75,65 +74,45 @@ connection.onInitialized(() => {
 	}
 });
 
-// The example settings
-interface ExampleSettings {
-	maxNumberOfProblems: number;
+interface PAPRikaSettings {
+	runOnSave: boolean;
+	runOnOpen: boolean;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000 };
-let globalSettings: ExampleSettings = defaultSettings;
-
-// Cache the settings of all open documents
-let documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
+const defaultSettings: PAPRikaSettings = { runOnSave: true, runOnOpen: true };
+let globalSettings: PAPRikaSettings = defaultSettings;
 
 connection.onDidChangeConfiguration(change => {
-	if (hasConfigurationCapability) {
-		// Reset all cached document settings
-		documentSettings.clear();
-	} else {
-		globalSettings = <ExampleSettings>(
-			(change.settings.languageServerExample || defaultSettings)
-		);
-	}
+	globalSettings = <PAPRikaSettings>(
+		(change.settings.pAPRika || defaultSettings)
+	);
 });
 
-function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
-	if (!hasConfigurationCapability) {
-		return Promise.resolve(globalSettings);
-	}
-	let result = documentSettings.get(resource);
-	if (!result) {
-		result = connection.workspace.getConfiguration({
-			scopeUri: resource,
-			section: 'pAPRrika'
-		});
-		documentSettings.set(resource, result);
-	}
-	return result;
+async function runPAPRika(documentEvent: TextDocumentChangeEvent<TextDocument>) {
+	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
+
+	console.info('Running pAPRika on:', testSuitePath);
+	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 }
 
 // Only keep settings for open documents
-documents.onDidClose(e => {
-	documentSettings.delete(e.document.uri);
-});
+documents.onDidClose(e => { });
 
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
-documents.onDidChangeContent(change => {});
+documents.onDidChangeContent(change => { });
 
-documents.onDidSave(documentEvent => {
-	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
-	console.info('Saved:', testSuitePath);
-	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
+documents.onDidSave(async documentEvent => {
+	console.log(globalSettings);
+
+	globalSettings.runOnSave && runPAPRika(documentEvent);
 });
 
-documents.onDidOpen(documentEvent => {
-	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
-	console.info('Opened:', testSuitePath);
-	testSuitePath !== undefined	&& runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
+documents.onDidOpen(async documentEvent => {
+	globalSettings.runOnOpen && runPAPRika(documentEvent);
 });
 
 connection.onDidChangeWatchedFiles(_change => {

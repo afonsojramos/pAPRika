@@ -27,15 +27,21 @@
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "Example configuration",
+			"title": "pAPRika",
 			"properties": {
-				"languageServerExample.maxNumberOfProblems": {
+				"pAPRika.runOnOpen": {
 					"scope": "resource",
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
+					"type": "boolean",
+					"default": true,
+					"description": "Run pAPRika when opening files."
 				},
-				"languageServerExample.trace.server": {
+				"pAPRika.runOnSave": {
+					"scope": "resource",
+					"type": "boolean",
+					"default": true,
+					"description": "Run pAPRika when saving files."
+				},
+				"pAPRika.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
