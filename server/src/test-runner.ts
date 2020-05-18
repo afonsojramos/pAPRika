@@ -10,8 +10,8 @@ interface TestListMap {
 }
 
 interface TestResultObject {
-	'test': Mocha.Test;
-	'passed': boolean;
+	test: Mocha.Test;
+	passed: boolean;
 }
 
 /**
@@ -40,8 +40,8 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 
 		runner.on('fail', (test: Mocha.Test) => {
 			testResults.push({
-				'test': test,
-				'passed': false
+				test: test,
+				passed: false
 			});
 
 			const testedFunctionName: string | undefined = getTestedFunctionName(test);
@@ -55,13 +55,13 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 
 		runner.on('pass', (test: Mocha.Test) => {
 			testResults.push({
-				'test': test,
-				'passed': true
+				test: test,
+				passed: true
 			});
 		});
 
 		runner.on('end', () => {
-			Object.keys(failingTests).forEach(testedFunctionName => {
+			Object.keys(failingTests).forEach((testedFunctionName) => {
 				if (testedFunctionName !== undefined) {
 					generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider);
 				}
@@ -90,7 +90,13 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
  * @param {string} functionName Name of function under testing.
  * @param {SuggestionProvider} suggestionProvider Code editor suggestion provider.
  */
-function runTest(testSuitePath: string, document: TextDocument, replacements: Replacement[], functionName: string, suggestionProvider: SuggestionProvider): void {
+function runTest(
+	testSuitePath: string,
+	document: TextDocument,
+	replacements: Replacement[],
+	functionName: string,
+	suggestionProvider: SuggestionProvider
+): void {
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
 	mocha.fgrep(functionName);
@@ -113,7 +119,6 @@ function runTest(testSuitePath: string, document: TextDocument, replacements: Re
 
 			unlinkSync(testSuitePath);
 		});
-
 	} catch (err) {
 		console.log(err);
 		unlinkSync(testSuitePath);

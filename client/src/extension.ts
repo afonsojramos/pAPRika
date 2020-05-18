@@ -11,9 +11,7 @@ let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
 	// The server is implemented in node
-	let serverModule = context.asAbsolutePath(
-		path.join('server', 'out', 'server.js')
-	);
+	let serverModule = context.asAbsolutePath(path.join('server', 'out', 'server.js'));
 	// The debug options for the server
 	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
 	let debugOptions = { execArgv: ['--nolazy', '--inspect=6901'] };
@@ -41,12 +39,7 @@ export function activate(context: ExtensionContext) {
 	};
 
 	// Create the language client and start the client.
-	client = new LanguageClient(
-		'pAPRika',
-		'pAPRika',
-		serverOptions,
-		clientOptions
-	);
+	client = new LanguageClient('pAPRika', 'pAPRika', serverOptions, clientOptions);
 
 	// Start the client. This will also launch the server
 	client.start();

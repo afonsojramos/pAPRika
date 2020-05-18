@@ -3,7 +3,17 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { Connection, createConnection, DidChangeConfigurationNotification, InitializeParams, InitializeResult, ProposedFeatures, TextDocumentChangeEvent, TextDocuments, TextDocumentSyncKind } from 'vscode-languageserver';
+import {
+	Connection,
+	createConnection,
+	DidChangeConfigurationNotification,
+	InitializeParams,
+	InitializeResult,
+	ProposedFeatures,
+	TextDocumentChangeEvent,
+	TextDocuments,
+	TextDocumentSyncKind
+} from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { uriToFilePath } from 'vscode-languageserver/lib/files';
 import SuggestionProvider from './suggestion-provider';
@@ -30,12 +40,8 @@ connection.onInitialize((params: InitializeParams) => {
 
 	// Does the client support the `workspace/configuration` request?
 	// If not, we will fall back using global settings
-	hasConfigurationCapability = !!(
-		capabilities.workspace && !!capabilities.workspace.configuration
-	);
-	hasWorkspaceFolderCapability = !!(
-		capabilities.workspace && !!capabilities.workspace.workspaceFolders
-	);
+	hasConfigurationCapability = !!(capabilities.workspace && !!capabilities.workspace.configuration);
+	hasWorkspaceFolderCapability = !!(capabilities.workspace && !!capabilities.workspace.workspaceFolders);
 	hasDiagnosticRelatedInformationCapability = !!(
 		capabilities.textDocument &&
 		capabilities.textDocument.publishDiagnostics &&
@@ -68,7 +74,7 @@ connection.onInitialized(() => {
 		connection.client.register(DidChangeConfigurationNotification.type, undefined);
 	}
 	if (hasWorkspaceFolderCapability) {
-		connection.workspace.onDidChangeWorkspaceFolders(_event => {
+		connection.workspace.onDidChangeWorkspaceFolders((_event) => {
 			connection.console.log('Workspace folder change event received.');
 		});
 	}
@@ -82,14 +88,15 @@ interface PAPRikaSettings {
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: PAPRikaSettings = { runOnSave: true, runOnOpen: true };
+const defaultSettings: PAPRikaSettings = {
+	runOnSave: true,
+	runOnOpen: true
+};
 let globalSettings: PAPRikaSettings = defaultSettings;
 
-connection.onDidChangeConfiguration(change => {
+connection.onDidChangeConfiguration((change) => {
 	if (change.settings) {
-		globalSettings = <PAPRikaSettings>(
-			(change.settings.pAPRika || defaultSettings)
-		);
+		globalSettings = <PAPRikaSettings>(change.settings.pAPRika || defaultSettings);
 	}
 });
 
@@ -105,21 +112,21 @@ async function runPAPRika(documentEvent: TextDocumentChangeEvent<TextDocument>) 
 	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 }
 
-documents.onDidClose(e => { });
+documents.onDidClose((e) => {});
 
-documents.onDidChangeContent(change => { });
+documents.onDidChangeContent((change) => {});
 
-documents.onDidSave(async documentEvent => {
+documents.onDidSave(async (documentEvent) => {
 	console.log(globalSettings);
 
 	globalSettings.runOnSave && runPAPRika(documentEvent);
 });
 
-documents.onDidOpen(async documentEvent => {
+documents.onDidOpen(async (documentEvent) => {
 	globalSettings.runOnOpen && runPAPRika(documentEvent);
 });
 
-connection.onDidChangeWatchedFiles(_change => {
+connection.onDidChangeWatchedFiles((_change) => {
 	// Monitored files have change in VSCode
 	connection.console.log('We received an file change event');
 });

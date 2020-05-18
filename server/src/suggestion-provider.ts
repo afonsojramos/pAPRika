@@ -1,4 +1,14 @@
-import { CancellationToken, CodeAction, CodeActionContext, Command, Connection, Diagnostic, DiagnosticSeverity, Range, TextDocument } from 'vscode-languageserver';
+import {
+	CancellationToken,
+	CodeAction,
+	CodeActionContext,
+	Command,
+	Connection,
+	Diagnostic,
+	DiagnosticSeverity,
+	Range,
+	TextDocument
+} from 'vscode-languageserver';
 import Replacement from './replacement';
 
 export default class SuggestionProvider {
@@ -33,5 +43,4 @@ export default class SuggestionProvider {
 
 		this.connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
 	}
-
 }

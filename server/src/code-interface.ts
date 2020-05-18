@@ -14,7 +14,8 @@ const mathOperators: number[] = [
 	ts.SyntaxKind.SlashToken,
 	ts.SyntaxKind.AsteriskToken,
 	ts.SyntaxKind.MinusToken,
-	ts.SyntaxKind.PlusToken];
+	ts.SyntaxKind.PlusToken
+];
 
 const mathOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.SlashToken]: '/',
@@ -32,7 +33,8 @@ const comparisonOperators: number[] = [
 	ts.SyntaxKind.ExclamationEqualsEqualsToken,
 	ts.SyntaxKind.ExclamationEqualsToken,
 	ts.SyntaxKind.GreaterThanEqualsToken,
-	ts.SyntaxKind.GreaterThanToken];
+	ts.SyntaxKind.GreaterThanToken
+];
 
 const comparisonOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.FirstBinaryOperator]: '<',
@@ -98,7 +100,12 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 	}
 } */
 
-function generateVariations(filePath: string, functionName: string, document: TextDocument, suggestionProvider: SugestionProvider) {
+function generateVariations(
+	filePath: string,
+	functionName: string,
+	document: TextDocument,
+	suggestionProvider: SugestionProvider
+) {
 	const originalFileContent: string = readFileSync(filePath).toString();
 	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName);
 	let replacementList: Replacement[] = new Array();
@@ -117,8 +124,12 @@ function generateVariations(filePath: string, functionName: string, document: Te
 	replacementList = [];
 
 	const originalFunction: string = functionNode!.getText();
-	const switchExpressionsVariations: string[] = switchExpressions(originalFileContent, originalFunction, replacementList);
-	
+	const switchExpressionsVariations: string[] = switchExpressions(
+		originalFileContent,
+		originalFunction,
+		replacementList
+	);
+
 	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
 		const variation: string = switchExpressionsVariation;
 		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.ts`;
@@ -179,35 +190,69 @@ function switchExpressions(fileText: string, functionText: string, replacementLi
 function generateOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
 	const operator: ts.Node = node.getChildAt(1);
 	if (mathOperators.includes(operator.kind)) {
-		mathOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
-			const operatorText = mathOperatorsToText[newOperator];
-			const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), operator.getText(), operatorText);
-			replacementList.push(replacement);
-		});
+		mathOperators
+			.filter((op) => op !== operator.kind)
+			.forEach((newOperator) => {
+				const operatorText = mathOperatorsToText[newOperator];
+				const replacement: Replacement = Replacement.replace(
+					operator.getStart(),
+					operator.getEnd(),
+					operator.getText(),
+					operatorText
+				);
+				replacementList.push(replacement);
+			});
 	}
 
 	if (comparisonOperators.includes(operator.kind)) {
-		comparisonOperators.filter((op) => op !== operator.kind).forEach((newOperator) => {
-			const operatorText = comparisonOperatorsToText[newOperator];
-			const replacement: Replacement = Replacement.replace(operator.getStart(), operator.getEnd(), operator.getText(), operatorText);
-			replacementList.push(replacement);
-		});
+		comparisonOperators
+			.filter((op) => op !== operator.kind)
+			.forEach((newOperator) => {
+				const operatorText = comparisonOperatorsToText[newOperator];
+				const replacement: Replacement = Replacement.replace(
+					operator.getStart(),
+					operator.getEnd(),
+					operator.getText(),
+					operatorText
+				);
+				replacementList.push(replacement);
+			});
 	}
 }
 
 function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
 	const rhsNode: ts.Node = node.getChildAt(2);
 	const rhsNodeText: string = rhsNode.getText();
-	const replacementPlusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} + 1)`);
-	const replacementMinusOne: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText} - 1)`);
+	const replacementPlusOne: Replacement = Replacement.replace(
+		rhsNode.getStart(),
+		rhsNode.getEnd(),
+		rhsNodeText,
+		`(${rhsNodeText} + 1)`
+	);
+	const replacementMinusOne: Replacement = Replacement.replace(
+		rhsNode.getStart(),
+		rhsNode.getEnd(),
+		rhsNodeText,
+		`(${rhsNodeText} - 1)`
+	);
 	replacementList.push(replacementPlusOne);
 	replacementList.push(replacementMinusOne);
 }
 
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
 	const nodeText: string = node.getFullText();
-	const replacementPlusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} + 1)`);
-	const replacementMinusOne: Replacement = Replacement.replace(node.getStart(), node.getEnd(), nodeText, `(${nodeText} - 1)`);
+	const replacementPlusOne: Replacement = Replacement.replace(
+		node.getStart(),
+		node.getEnd(),
+		nodeText,
+		`(${nodeText} + 1)`
+	);
+	const replacementMinusOne: Replacement = Replacement.replace(
+		node.getStart(),
+		node.getEnd(),
+		nodeText,
+		`(${nodeText} - 1)`
+	);
 	replacementList.push(replacementPlusOne);
 	replacementList.push(replacementMinusOne);
 }
@@ -220,7 +265,12 @@ function generateSwitchVariants(node: ts.Node, replacementList: Replacement[]) {
 	const rhsNode: ts.Node = node.getChildAt(2);
 	const rhsNodeText: string = rhsNode.getText();
 	const newText: string = rhsNodeText + operatorText + lhsNodeText;
-	const replacement: Replacement = Replacement.replace(lhsNode.getStart(), rhsNode.getEnd(), node.getFullText(), newText);
+	const replacement: Replacement = Replacement.replace(
+		lhsNode.getStart(),
+		rhsNode.getEnd(),
+		node.getFullText(),
+		newText
+	);
 	replacementList.push(replacement);
 }
 
@@ -229,15 +279,26 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
 	const lhsNodeText: string = lhsNode.getText();
 	const rhsNode: ts.Node = node.getChildAt(2);
 	const rhsNodeText: string = rhsNode.getText();
-	const replacementLeftPar: Replacement = Replacement.replace(lhsNode.getStart(), lhsNode.getEnd(), lhsNodeText, `(${lhsNodeText})`);
-	const replacementRightPar: Replacement = Replacement.replace(rhsNode.getStart(), rhsNode.getEnd(), rhsNodeText, `(${rhsNodeText})`);
+	const replacementLeftPar: Replacement = Replacement.replace(
+		lhsNode.getStart(),
+		lhsNode.getEnd(),
+		lhsNodeText,
+		`(${lhsNodeText})`
+	);
+	const replacementRightPar: Replacement = Replacement.replace(
+		rhsNode.getStart(),
+		rhsNode.getEnd(),
+		rhsNodeText,
+		`(${rhsNodeText})`
+	);
 	replacementList.push(replacementLeftPar);
 	replacementList.push(replacementRightPar);
 }
 
 function replaceLines(originalFile: string, replacement: Replacement): string {
 	let newFile: string = originalFile;
-	newFile = newFile.slice(0, replacement.start) + replacement.newText + newFile.slice(replacement.end, newFile.length);
+	newFile =
+		newFile.slice(0, replacement.start) + replacement.newText + newFile.slice(replacement.end, newFile.length);
 	return newFile;
 }
 
@@ -254,7 +315,12 @@ function getTestedFunctionName(test: Mocha.Test): string | undefined {
 }
 
 function getFunctionDeclaration(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
-	const sourceFile: ts.SourceFile = ts.createSourceFile('tmpDeclaration.ts', readFileSync(filePath).toString(), ts.ScriptTarget.Latest, true);
+	const sourceFile: ts.SourceFile = ts.createSourceFile(
+		'tmpDeclaration.ts',
+		readFileSync(filePath).toString(),
+		ts.ScriptTarget.Latest,
+		true
+	);
 	const syntaxList: ts.Node = sourceFile.getChildAt(0);
 	const functionDeclarations: ts.FunctionDeclaration[] = syntaxList.getChildren().filter(ts.isFunctionDeclaration);
 
@@ -281,4 +347,3 @@ function syntaxKindToName(kind: ts.SyntaxKind): string {
 }
 
 export { generateVariations, getTestedFunctionName, getFunctionDeclaration };
-
