@@ -4,7 +4,7 @@
 	"description": "Property-Based Automatic Program Repair made easy",
 	"author": "afonsojramos",
 	"license": "MIT",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/afonsojramos/pAPRika"

@@ -29,7 +29,6 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
-let hasExecuteCommandClientCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
