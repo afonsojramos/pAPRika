@@ -86,11 +86,18 @@ const defaultSettings: PAPRikaSettings = { runOnSave: true, runOnOpen: true };
 let globalSettings: PAPRikaSettings = defaultSettings;
 
 connection.onDidChangeConfiguration(change => {
-	globalSettings = <PAPRikaSettings>(
-		(change.settings.pAPRika || defaultSettings)
-	);
+	if (change.settings) {
+		globalSettings = <PAPRikaSettings>(
+			(change.settings.pAPRika || defaultSettings)
+		);
+	}
 });
 
+/**
+ * Runs test suite for document if its path is valid.
+ *
+ * @param {TextDocumentChangeEvent<TextDocument>} documentEvent
+ */
 async function runPAPRika(documentEvent: TextDocumentChangeEvent<TextDocument>) {
 	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
 
@@ -98,11 +105,8 @@ async function runPAPRika(documentEvent: TextDocumentChangeEvent<TextDocument>) 
 	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
 }
 
-// Only keep settings for open documents
 documents.onDidClose(e => { });
 
-// The content of a text document has changed. This event is emitted
-// when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => { });
 
 documents.onDidSave(async documentEvent => {
