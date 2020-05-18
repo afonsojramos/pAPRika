@@ -29,6 +29,7 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+let hasExecuteCommandClientCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -49,6 +50,9 @@ connection.onInitialize((params: InitializeParams) => {
 			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: true
+			},
+			executeCommandProvider: {
+				commands: ['pAPRika.runAPRSuite']
 			}
 		}
 	};
@@ -100,23 +104,27 @@ connection.onDidChangeConfiguration((change) => {
  *
  * @param {TextDocumentChangeEvent<TextDocument>} documentEvent
  */
-async function runPAPRika(documentEvent: TextDocumentChangeEvent<TextDocument>) {
-	let testSuitePath: string | undefined = uriToFilePath(documentEvent.document.uri);
+function runPAPRika(document: TextDocument) {
+	let testSuitePath: string | undefined = uriToFilePath(document.uri);
 
 	console.info('Running pAPRika on:', testSuitePath);
-	testSuitePath !== undefined && runTestSuite(testSuitePath, documentEvent.document, suggestionProvider);
+	testSuitePath !== undefined && runTestSuite(testSuitePath, document, suggestionProvider);
 }
 
 documents.onDidClose((e) => {});
 
 documents.onDidChangeContent((change) => {});
 
-documents.onDidSave(async (documentEvent) => {
-	globalSettings.runOnSave && runPAPRika(documentEvent);
+documents.onDidSave((documentEvent) => {
+	globalSettings.runOnSave && runPAPRika(documentEvent.document);
 });
 
-documents.onDidOpen(async (documentEvent) => {
-	globalSettings.runOnOpen && runPAPRika(documentEvent);
+documents.onDidOpen((documentEvent) => {
+	globalSettings.runOnOpen && runPAPRika(documentEvent.document);
+});
+
+connection.onExecuteCommand((handler) => {
+	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika);
 });
 
 connection.onDidChangeWatchedFiles((_change) => {

@@ -53,7 +53,14 @@
 					"description": "Traces the communication between VS Code and the language server."
 				}
 			}
-		}
+		},
+		"commands": [
+			{
+				"command": "pAPRika.runAPRSuite",
+				"title": "Run pAPRika",
+				"when": "editorLangId == javascript"
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
