@@ -26,7 +26,7 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	public suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
-		let diagnostics: Diagnostic[] = new Array<Diagnostic>();
+		const diagnostics: Diagnostic[] = [];
 
 		replacementList.forEach((replacement: Replacement) => {
 			let diagnostic: Diagnostic = {
