@@ -1,14 +1,4 @@
-import {
-	CancellationToken,
-	CodeAction,
-	CodeActionContext,
-	Command,
-	Connection,
-	Diagnostic,
-	DiagnosticSeverity,
-	Range,
-	TextDocument
-} from 'vscode-languageserver';
+import { Connection, Diagnostic, DiagnosticSeverity, TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
 
 export default class SuggestionProvider {
