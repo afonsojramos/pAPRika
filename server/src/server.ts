@@ -79,6 +79,18 @@ connection.onInitialize((params: InitializeParams) => {
 	return result;
 });
 
+connection.onCodeAction(provideCodeActions);
+
+async function provideCodeActions(params: CodeActionParams): Promise<CodeAction[]> {
+	console.log(params);
+
+	if (!params.context.diagnostics.length) {
+		return [];
+	}
+
+	return quickFix(params.textDocument.uri, params);
+}
+
 connection.onInitialized(() => {
 	if (hasConfigurationCapability) {
 		// Register for all configuration changes.
