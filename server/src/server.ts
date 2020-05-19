@@ -69,6 +69,13 @@ connection.onInitialize((params: InitializeParams) => {
 			}
 		};
 	}
+
+	if (hasCodeActionLiteralsCapability) {
+		result.capabilities.codeActionProvider = {
+			codeActionKinds: [CodeActionKind.QuickFix]
+		};
+	}
+
 	return result;
 });
 
