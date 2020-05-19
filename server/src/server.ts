@@ -5,13 +5,16 @@ import {
 	InitializeParams,
 	InitializeResult,
 	ProposedFeatures,
-	TextDocumentChangeEvent,
 	TextDocuments,
-	TextDocumentSyncKind
+	TextDocumentSyncKind,
+	CodeActionKind,
+	CodeActionParams,
+	CodeAction
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { uriToFilePath } from 'vscode-languageserver/lib/files';
 import SuggestionProvider from './suggestion-provider';
+import { quickFix } from './code-action-provider';
 import { runTestSuite } from './test-runner';
 import ts = require('typescript');
 
