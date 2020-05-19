@@ -29,6 +29,7 @@ let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
+let hasCodeActionLiteralsCapability: boolean = false;
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
@@ -41,6 +42,11 @@ connection.onInitialize((params: InitializeParams) => {
 		capabilities.textDocument &&
 		capabilities.textDocument.publishDiagnostics &&
 		capabilities.textDocument.publishDiagnostics.relatedInformation
+	);
+	hasCodeActionLiteralsCapability = !!(
+		capabilities.textDocument &&
+		capabilities.textDocument.codeAction &&
+		capabilities.textDocument.codeAction.codeActionLiteralSupport
 	);
 
 	const result: InitializeResult = {
