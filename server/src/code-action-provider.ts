@@ -1,15 +1,14 @@
-import { CodeActionParams, CodeAction, CodeActionKind } from 'vscode-languageserver';
+import { CodeAction, CodeActionKind, Diagnostic } from 'vscode-languageserver';
 import { isNullOrUndefined } from 'util';
 
 /**
  * Provide Quick Fix based on diagnostics.
  *
  * @param {string} textDocumentUri
- * @param {CodeActionParams} codeActionParams
+ * @param {Diagnostic[]} diagnostics
  * @returns {CodeAction[]}
  */
-function quickFix(textDocumentUri: string, codeActionParams: CodeActionParams): CodeAction[] {
-	const diagnostics = codeActionParams.context.diagnostics;
+function quickFix(textDocumentUri: string, diagnostics: Diagnostic[]): CodeAction[] {
 	if (isNullOrUndefined(diagnostics) || diagnostics.length === 0) {
 		return [];
 	}

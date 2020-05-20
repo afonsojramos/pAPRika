@@ -84,14 +84,12 @@ connection.onInitialize((params: InitializeParams) => {
 
 connection.onCodeAction(provideCodeActions);
 
-async function provideCodeActions(params: CodeActionParams): Promise<CodeAction[]> {
-	console.log(params);
-
-	if (!params.context.diagnostics.length) {
+async function provideCodeActions(codeActionParams: CodeActionParams): Promise<CodeAction[]> {
+	if (!codeActionParams.context.diagnostics.length) {
 		return [];
 	}
 
-	return quickFix(params.textDocument.uri, params);
+	return quickFix(codeActionParams.textDocument.uri, codeActionParams.context.diagnostics);
 }
 
 connection.onInitialized(() => {
