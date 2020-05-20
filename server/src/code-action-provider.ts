@@ -9,10 +9,10 @@ function quickFix(textDocumentUri: string, parms: CodeActionParams) {
 
 	const codeActions: CodeAction[] = [];
 	diagnostics.forEach((diag) => {
-		let fromRegex: RegExp = /.*Replace:  .* ==> (.*)/g;
-		let fromMatch: RegExpExecArray | null = fromRegex.exec(diag.message.replace(/\s/g, ''));
-		let from = fromMatch![1];
-		console.log(from);
+		const replaceRegex: RegExp = /.*Replace:.*==>(.*)/g;
+		const parsedText = diag.message.replace(/\s/g, '');
+		const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText);
+		const newText = replaceRegexMatch![1];
 
 		codeActions.push({
 			title: diag.message,
