@@ -14,21 +14,22 @@ function quickFix(textDocumentUri: string, parms: CodeActionParams) {
 		const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText);
 		const newText = replaceRegexMatch![1];
 
-		codeActions.push({
-			title: diag.message,
-			kind: CodeActionKind.QuickFix,
-			diagnostics: [diag],
-			edit: {
-				changes: {
-					[textDocumentUri]: [
-						{
-							range: diag.range,
-							newText: from
-						}
-					]
+		newText &&
+			codeActions.push({
+				title: diag.message,
+				kind: CodeActionKind.QuickFix,
+				diagnostics: [diag],
+				edit: {
+					changes: {
+						[textDocumentUri]: [
+							{
+								range: diag.range,
+								newText
+							}
+						]
+					}
 				}
-			}
-		});
+			});
 		return;
 	});
 
