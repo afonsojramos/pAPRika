@@ -1,8 +1,15 @@
 import { CodeActionParams, CodeAction, CodeActionKind } from 'vscode-languageserver';
 import { isNullOrUndefined } from 'util';
 
-function quickFix(textDocumentUri: string, parms: CodeActionParams) {
-	const diagnostics = parms.context.diagnostics;
+/**
+ * Provide Quick Fix based on diagnostics.
+ *
+ * @param {string} textDocumentUri
+ * @param {CodeActionParams} codeActionParams
+ * @returns {CodeAction[]}
+ */
+function quickFix(textDocumentUri: string, codeActionParams: CodeActionParams): CodeAction[] {
+	const diagnostics = codeActionParams.context.diagnostics;
 	if (isNullOrUndefined(diagnostics) || diagnostics.length === 0) {
 		return [];
 	}
