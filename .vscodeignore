@@ -12,3 +12,10 @@ client/node_modules/**
 !client/node_modules/vscode-languageserver-protocol/**
 !client/node_modules/vscode-languageserver-types/**
 !client/node_modules/semver/**
+test/**
+.circleci/**
+.github/**
+scripts/**
+pAPRika/**
+!pAPRika/assets/pAPRika.png
+!pAPRika/assets/pAPRika-v0.1.gif
