@@ -114,9 +114,7 @@ connection.onDidChangeConfiguration((change) => {
 	}
 });
 
-connection.onCodeAction(provideCodeActions);
-
-function provideCodeActions(codeActionParams: CodeActionParams): CodeAction[] {
+connection.onCodeAction((codeActionParams): CodeAction[] => {
 	if (!codeActionParams.context.diagnostics.length) {
 		return [];
 	}
@@ -126,7 +124,7 @@ function provideCodeActions(codeActionParams: CodeActionParams): CodeAction[] {
 	}
 
 	return quickFix(textDocument.uri, codeActionParams.context.diagnostics);
-}
+});
 
 /**
  * Runs test suite for document if its path is valid.
