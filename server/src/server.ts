@@ -34,6 +34,20 @@ let hasWorkspaceFolderCapability: boolean = false;
 let hasDiagnosticRelatedInformationCapability: boolean = false;
 let hasCodeActionLiteralsCapability: boolean = false;
 
+interface PAPRikaSettings {
+	runOnSave: boolean;
+	runOnOpen: boolean;
+}
+
+// The global settings, used when the `workspace/configuration` request is not supported by the client.
+// Please note that this is not the case when using this server with the client provided in this example
+// but could happen with other clients.
+const defaultSettings: PAPRikaSettings = {
+	runOnSave: true,
+	runOnOpen: true
+};
+let globalSettings: PAPRikaSettings = defaultSettings;
+
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities;
 
@@ -82,16 +96,6 @@ connection.onInitialize((params: InitializeParams) => {
 	return result;
 });
 
-connection.onCodeAction(provideCodeActions);
-
-async function provideCodeActions(codeActionParams: CodeActionParams): Promise<CodeAction[]> {
-	if (!codeActionParams.context.diagnostics.length) {
-		return [];
-	}
-
-	return quickFix(codeActionParams.textDocument.uri, codeActionParams.context.diagnostics);
-}
-
 connection.onInitialized(() => {
 	if (hasConfigurationCapability) {
 		// Register for all configuration changes.
@@ -104,25 +108,25 @@ connection.onInitialized(() => {
 	}
 });
 
-interface PAPRikaSettings {
-	runOnSave: boolean;
-	runOnOpen: boolean;
-}
-
-// The global settings, used when the `workspace/configuration` request is not supported by the client.
-// Please note that this is not the case when using this server with the client provided in this example
-// but could happen with other clients.
-const defaultSettings: PAPRikaSettings = {
-	runOnSave: true,
-	runOnOpen: true
-};
-let globalSettings: PAPRikaSettings = defaultSettings;
-
 connection.onDidChangeConfiguration((change) => {
 	if (change.settings) {
 		globalSettings = <PAPRikaSettings>(change.settings.pAPRika || defaultSettings);
 	}
 });
+
+connection.onCodeAction(provideCodeActions);
+
+function provideCodeActions(codeActionParams: CodeActionParams): CodeAction[] {
+	if (!codeActionParams.context.diagnostics.length) {
+		return [];
+	}
+	const textDocument = documents.get(codeActionParams.textDocument.uri);
+	if (textDocument === undefined) {
+		return [];
+	}
+
+	return quickFix(textDocument.uri, codeActionParams.context.diagnostics);
+}
 
 /**
  * Runs test suite for document if its path is valid.
@@ -136,10 +140,6 @@ function runPAPRika(document: TextDocument) {
 	testSuitePath !== undefined && runTestSuite(testSuitePath, document, suggestionProvider);
 }
 
-documents.onDidClose((e) => {});
-
-documents.onDidChangeContent((change) => {});
-
 documents.onDidSave((documentEvent) => {
 	globalSettings.runOnSave && runPAPRika(documentEvent.document);
 });
@@ -150,11 +150,6 @@ documents.onDidOpen((documentEvent) => {
 
 connection.onExecuteCommand((handler) => {
 	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika);
-});
-
-connection.onDidChangeWatchedFiles((_change) => {
-	// Monitored files have change in VSCode
-	connection.console.log('We received an file change event');
 });
 
 // Make the text document manager listen on the connection
