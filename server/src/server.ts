@@ -114,17 +114,19 @@ connection.onDidChangeConfiguration((change) => {
 	}
 });
 
-connection.onCodeAction((codeActionParams): CodeAction[] => {
-	if (!codeActionParams.context.diagnostics.length) {
-		return [];
+connection.onCodeAction(
+	async (codeActionParams: CodeActionParams): Promise<CodeAction[]> => {
+		if (!codeActionParams.context.diagnostics.length) {
+			return [];
+		}
+		const textDocument = documents.get(codeActionParams.textDocument.uri);
+		if (textDocument === undefined) {
+			return [];
+		}
+		const codeActions = await suggestionProvider.quickFix(textDocument.uri, codeActionParams.context.diagnostics);
+		return codeActions;
 	}
-	const textDocument = documents.get(codeActionParams.textDocument.uri);
-	if (textDocument === undefined) {
-		return [];
-	}
-
-	return quickFix(textDocument.uri, codeActionParams.context.diagnostics);
-});
+);
 
 /**
  * Runs test suite for document if its path is valid.
