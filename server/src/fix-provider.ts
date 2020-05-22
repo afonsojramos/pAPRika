@@ -45,6 +45,20 @@ export default class SuggestionProvider {
 	}
 
 	/**
+	 * Update diagnostics on client and store them in docsDiagnostics field
+	 *
+	 * @param {strin} textDocumentUri
+	 * @param {Diagnostic[]} diagnostics
+	 * @returns {Promise<void>}
+	 * @memberof SuggestionProvider
+	 */
+	async updateDiagnostics(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<void> {
+		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`);
+		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics });
+		this.diagnosticsDocs.set(textDocumentUri, diagnostics);
+	}
+
+	/**
 	 * Provide Quick Fix based on diagnostics.
 	 *
 	 * @param {string} textDocumentUri
