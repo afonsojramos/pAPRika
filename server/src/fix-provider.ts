@@ -1,8 +1,17 @@
-import { Connection, Diagnostic, DiagnosticSeverity, TextDocument } from 'vscode-languageserver';
+import { isNullOrUndefined } from 'util';
+import {
+	CodeAction,
+	CodeActionKind,
+	Connection,
+	Diagnostic,
+	DiagnosticSeverity,
+	TextDocument
+} from 'vscode-languageserver';
 import Replacement from './replacement';
 
 export default class SuggestionProvider {
 	private connection: Connection;
+	private diagnosticsDocs: Map<String, Diagnostic[]> = new Map<String, Diagnostic[]>();
 
 	constructor(connection: Connection) {
 		this.connection = connection;
@@ -15,7 +24,7 @@ export default class SuggestionProvider {
 	 * @param {Replacement[]} replacementList List of suggested replacements.
 	 * @memberof SuggestionProvider
 	 */
-	public suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
+	async suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
 		const diagnostics: Diagnostic[] = [];
 
 		replacementList.forEach((replacement: Replacement) => {
@@ -30,7 +39,8 @@ export default class SuggestionProvider {
 			};
 			diagnostics.push(diagnostic);
 		});
-
-		this.connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+		let existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri);
+		existingDiagnostics && diagnostics.push(...existingDiagnostics);
+		await this.updateDiagnostics(textDocument.uri, diagnostics);
 	}
 }
