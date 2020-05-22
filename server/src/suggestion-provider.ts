@@ -24,7 +24,7 @@ export default class SuggestionProvider {
 	 * @param {Replacement[]} replacementList List of suggested replacements.
 	 * @memberof SuggestionProvider
 	 */
-	async suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
+	suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
 		const diagnostics: Diagnostic[] = [];
 
 		replacementList.forEach((replacement: Replacement) => {
@@ -39,9 +39,14 @@ export default class SuggestionProvider {
 			};
 			diagnostics.push(diagnostic);
 		});
-		let existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri);
-		existingDiagnostics && diagnostics.push(...existingDiagnostics);
-		await this.updateDiagnostics(textDocument.uri, diagnostics);
+
+		const existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri) || [];
+		const newDiagnostics = diagnostics.filter((diag) => {
+			return existingDiagnostics?.find((newDiag) => diag === newDiag) ? false : true;
+		});
+		newDiagnostics.push(...existingDiagnostics);
+
+		this.updateDiagnostics(textDocument.uri, newDiagnostics);
 	}
 
 	/**
@@ -56,6 +61,18 @@ export default class SuggestionProvider {
 		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`);
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics });
 		this.diagnosticsDocs.set(textDocumentUri, diagnostics);
+	}
+
+	/**
+	 * Deletes all diagnostics for a Document
+	 *
+	 * @param {string} textDocumentUri
+	 * @memberof SuggestionProvider
+	 */
+	resetDiagnostics(textDocumentUri: string) {
+		console.info(`Reset diagnostics for ${textDocumentUri}`);
+		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: [] });
+		this.diagnosticsDocs.set(textDocumentUri, []);
 	}
 
 	/**

@@ -27,6 +27,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 	let mocha: Mocha = new Mocha();
 	mocha.addFile(testSuitePath);
 	console.info('Mocha added file: ' + testSuitePath.replace(/^.*[\\\/]/, ''));
+	suggestionProvider.resetDiagnostics(document.uri);
 
 	// see https://github.com/mochajs/mocha/issues/2783
 	// To be Solved in https://github.com/mochajs/mocha/pull/4234
