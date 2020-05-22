@@ -3,7 +3,7 @@ import * as Mocha from 'mocha';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { generateVariations, getTestedFunctionName } from './code-interface';
 import Replacement from './replacement';
-import SuggestionProvider from './suggestion-provider';
+import SuggestionProvider from './fix-provider';
 
 interface TestListMap {
 	[key: string]: Mocha.Test[];

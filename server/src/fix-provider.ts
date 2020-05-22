@@ -43,4 +43,50 @@ export default class SuggestionProvider {
 		existingDiagnostics && diagnostics.push(...existingDiagnostics);
 		await this.updateDiagnostics(textDocument.uri, diagnostics);
 	}
+
+	/**
+	 * Provide Quick Fix based on diagnostics.
+	 *
+	 * @param {string} textDocumentUri
+	 * @param {Diagnostic[]} diagnostics
+	 * @returns {CodeAction[]}
+	 */
+	async quickFix(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<CodeAction[]> {
+		if (isNullOrUndefined(diagnostics) || diagnostics.length === 0) {
+			return [];
+		}
+
+		const codeActions: CodeAction[] = [];
+		diagnostics.forEach((diag) => {
+			// Skip Diagnostics not from pAPRika
+			if (diag.source !== 'pAPRika') {
+				return;
+			}
+
+			const replaceRegex: RegExp = /.*Replace:.*==>(.*)/g;
+			const parsedText = diag.message.replace(/\s/g, '');
+			const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText);
+
+			replaceRegexMatch &&
+				replaceRegexMatch[1] &&
+				codeActions.push({
+					title: diag.message,
+					kind: CodeActionKind.QuickFix,
+					diagnostics: [diag],
+					edit: {
+						changes: {
+							[textDocumentUri]: [
+								{
+									range: diag.range,
+									newText: replaceRegexMatch[1]
+								}
+							]
+						}
+					}
+				});
+			return;
+		});
+
+		return codeActions;
+	}
 }
