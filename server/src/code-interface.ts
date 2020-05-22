@@ -3,7 +3,7 @@ import { dirname } from 'path';
 import * as ts from 'typescript';
 import { TextDocument } from 'vscode-languageserver';
 import Replacement from './replacement';
-import SugestionProvider from './fix-provider';
+import SugestionProvider from './suggestion-provider';
 import { runTest } from './test-runner';
 
 interface SyntaxKindToTextMap {
