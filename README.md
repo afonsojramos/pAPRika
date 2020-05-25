@@ -53,12 +53,6 @@ Lacks the. -->
   - Type `j` or `t` to see `Javascript` and `TypeScript` completion.
   - Enter text content such as `AAA aaa BBB`. The extension will emit diagnostics for all words in all-uppercase.
 
-## Release Notes
-
-### 0.1
-
-The initial release of pAPRika without Property-Based Testing.
-
 ***Enjoy!***
 
 **Made by [Afonso Ramos](https://github.com/afonsojramos)**
