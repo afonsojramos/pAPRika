@@ -113,19 +113,28 @@ connection.onDidChangeConfiguration((change) => {
 	}
 });
 
-connection.onCodeAction(
-	async (codeActionParams: CodeActionParams): Promise<CodeAction[]> => {
-		if (!codeActionParams.context.diagnostics.length) {
-			return [];
-		}
-		const textDocument = documents.get(codeActionParams.textDocument.uri);
-		if (textDocument === undefined) {
-			return [];
-		}
-		const codeActions = await suggestionProvider.quickFix(textDocument.uri, codeActionParams.context.diagnostics);
-		return codeActions;
+connection.onCodeAction((codeActionParams: CodeActionParams) => {
+	if (!codeActionParams.context.diagnostics.length) {
+		return [];
 	}
-);
+	const textDocument = documents.get(codeActionParams.textDocument.uri);
+	if (textDocument === undefined) {
+		return [];
+	}
+	const codeActions = suggestionProvider.quickFix(textDocument.uri, codeActionParams.context.diagnostics);
+	return codeActions;
+});
+
+connection.onExecuteCommand(async (handler) => {
+	var coiso = await connection.window.createWorkDoneProgress();
+	coiso.begin('running', 0.5, 'oh shit here he comes again', false);
+	//coiso.report(.70);
+	/* connection.window.attachWorkDoneProgress('2/5');
+	let type = new ProgressType();
+	connection.sendProgress(type, '2/6', 2); */
+	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika);
+	coiso.done();
+});
 
 /**
  * Runs test suite for document if its path is valid.
@@ -145,10 +154,6 @@ documents.onDidSave((documentEvent) => {
 
 documents.onDidOpen((documentEvent) => {
 	globalSettings.runOnOpen && runPAPRika(documentEvent.document);
-});
-
-connection.onExecuteCommand((handler) => {
-	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika);
 });
 
 // Make the text document manager listen on the connection
