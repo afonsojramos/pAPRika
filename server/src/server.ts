@@ -145,6 +145,8 @@ connection.onExecuteCommand(async (handler) => {
  * @param {TextDocumentChangeEvent<TextDocument>} documentEvent
  */
 function runPAPRika(document: TextDocument) {
+	if (!hasDiagnosticRelatedInformationCapability)
+		connection.window.showErrorMessage('Code Editor has no Diagnostic Related Information Capability');
 	let testSuitePath: string | undefined = uriToFilePath(document.uri);
 
 	console.info('Running pAPRika on:', testSuitePath);
