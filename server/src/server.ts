@@ -28,6 +28,7 @@ const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
+// This call has to be called here or some connection handlers won't work
 documents.listen(connection);
 
 let hasConfigurationCapability: boolean = false;
