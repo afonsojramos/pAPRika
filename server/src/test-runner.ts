@@ -35,6 +35,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 
 	try {
 		let runner: Mocha.Runner = mocha.run();
+		suggestionProvider.startProgressFeedback(runner.total, 'Running Test Suite');
 
 		let failingTests: TestListMap = {};
 		let testResults: TestResultObject[] = [];
@@ -61,12 +62,19 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 			});
 		});
 
-		runner.on('end', () => {
-			Object.keys(failingTests).forEach((testedFunctionName) => {
+		runner.on('test end', () => {
+			suggestionProvider.updateProgressFromStep();
+		});
+
+		runner.on('end', async () => {
+			suggestionProvider.updateProgressFromStep(Object.keys(failingTests).length);
+			Object.keys(failingTests).forEach(async (testedFunctionName) => {
 				if (testedFunctionName !== undefined) {
-					generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider);
+					await generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider);
+					suggestionProvider.updateProgressFromStep();
 				}
 			});
+			suggestionProvider.terminateProgress();
 
 			/* const openEditor = vscode.window.visibleTextEditors.filter(
 				editor => editor.document.uri === document.uri
