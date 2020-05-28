@@ -113,9 +113,9 @@ function runTest(
 			failingTestsList.push(test);
 		});
 
-		runner.on('end', () => {
+		runner.on('end', async () => {
 			if (failingTestsList.length === 0) {
-				suggestionProvider.suggestChanges(document, replacements);
+				await suggestionProvider.suggestChanges(document, replacements);
 			}
 
 			unlinkSync(testSuitePath);

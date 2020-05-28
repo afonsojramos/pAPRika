@@ -24,7 +24,7 @@ export default class SuggestionProvider {
 	 * @param {Replacement[]} replacementList List of suggested replacements.
 	 * @memberof SuggestionProvider
 	 */
-	suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
+	async suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
 		const diagnostics: Diagnostic[] = [];
 
 		replacementList.forEach((replacement: Replacement) => {
