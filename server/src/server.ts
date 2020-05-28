@@ -110,6 +110,14 @@ connection.onInitialized(() => {
 	}
 });
 
+documents.onDidSave((documentEvent) => {
+	globalSettings.runOnSave && runPAPRika(documentEvent.document);
+});
+
+documents.onDidOpen((documentEvent) => {
+	globalSettings.runOnOpen && runPAPRika(documentEvent.document);
+});
+
 connection.onDidChangeConfiguration((change) => {
 	if (change.settings) {
 		globalSettings = <PAPRikaSettings>(change.settings.pAPRika || defaultSettings);
