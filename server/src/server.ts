@@ -17,14 +17,14 @@ import { runTestSuite } from './test-runner';
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
-let connection: Connection = createConnection(ProposedFeatures.all);
+const connection: Connection = createConnection(ProposedFeatures.all);
 
 // Saved connection to Suggestion Provider for Diagnostics Sending
 let suggestionProvider = new SuggestionProvider(connection);
 
 // Create a simple text document manager. The text document manager
 // supports full document sync only
-let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 
 // Make the text document manager listen on the connection
 // for open, change and close text document events
