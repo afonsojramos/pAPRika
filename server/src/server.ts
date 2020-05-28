@@ -8,14 +8,12 @@ import {
 	TextDocuments,
 	TextDocumentSyncKind,
 	CodeActionKind,
-	CodeActionParams,
-	CodeAction
+	CodeActionParams
 } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { uriToFilePath } from 'vscode-languageserver/lib/files';
 import SuggestionProvider from './suggestion-provider';
 import { runTestSuite } from './test-runner';
-import ts = require('typescript');
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
@@ -27,6 +25,10 @@ let suggestionProvider = new SuggestionProvider(connection);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 let documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
+
+// Make the text document manager listen on the connection
+// for open, change and close text document events
+documents.listen(connection);
 
 let hasConfigurationCapability: boolean = false;
 let hasWorkspaceFolderCapability: boolean = false;
@@ -147,18 +149,6 @@ function runPAPRika(document: TextDocument) {
 	console.info('Running pAPRika on:', testSuitePath);
 	testSuitePath !== undefined && runTestSuite(testSuitePath, document, suggestionProvider);
 }
-
-documents.onDidSave((documentEvent) => {
-	globalSettings.runOnSave && runPAPRika(documentEvent.document);
-});
-
-documents.onDidOpen((documentEvent) => {
-	globalSettings.runOnOpen && runPAPRika(documentEvent.document);
-});
-
-// Make the text document manager listen on the connection
-// for open, change and close text document events
-documents.listen(connection);
 
 // Listen on the connection
 connection.listen();
