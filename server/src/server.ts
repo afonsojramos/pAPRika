@@ -126,11 +126,11 @@ connection.onDidChangeConfiguration((change) => {
 
 connection.onCodeAction((codeActionParams: CodeActionParams) => {
 	if (!codeActionParams.context.diagnostics.length) {
-		return [];
+		return;
 	}
 	const textDocument = documents.get(codeActionParams.textDocument.uri);
 	if (textDocument === undefined) {
-		return [];
+		return;
 	}
 	const codeActions = suggestionProvider.quickFix(textDocument.uri, codeActionParams.context.diagnostics);
 	return codeActions;
