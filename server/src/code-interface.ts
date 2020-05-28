@@ -100,7 +100,7 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 	}
 } */
 
-function generateVariations(
+async function generateVariations(
 	filePath: string,
 	functionName: string,
 	document: TextDocument,
@@ -115,8 +115,6 @@ function generateVariations(
 		const variation: string = replaceLines(originalFileContent, replacement);
 		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}${index}.ts`;
 		writeFileSync(variationFileName, variation);
-
-		// TODO: Insert a visual cue of progress
 
 		runTest(variationFileName, document, [replacement], functionName, suggestionProvider);
 	});
@@ -134,8 +132,6 @@ function generateVariations(
 		const variation: string = switchExpressionsVariation;
 		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.ts`;
 		writeFileSync(variationFileName, variation);
-
-		// TODO: Insert a visual cue of progress
 
 		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider);
 	});

@@ -136,15 +136,13 @@ connection.onCodeAction((codeActionParams: CodeActionParams) => {
 	return codeActions;
 });
 
+connection.onDidChangeTextDocument((params) => {
+	console.log(`${params.textDocument.uri} changed`);
+	console.log(`${JSON.stringify(params.contentChanges, null, 2)}`);
+});
+
 connection.onExecuteCommand(async (handler) => {
-	var coiso = await connection.window.createWorkDoneProgress();
-	coiso.begin('running', 0.5, 'oh shit here he comes again', false);
-	//coiso.report(.70);
-	/* connection.window.attachWorkDoneProgress('2/5');
-	let type = new ProgressType();
-	connection.sendProgress(type, '2/6', 2); */
 	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika);
-	coiso.done();
 });
 
 /**
