@@ -32,7 +32,7 @@ export default class SuggestionProvider {
 	 */
 	async startProgressFeedback(numberOfActions: number, message: string) {
 		this.paprikaProgress = await this.connection.window.createWorkDoneProgress();
-		this.paprikaProgress.begin('pAPRika: ' + message, 0);
+		this.paprikaProgress.begin(`pAPRika: ${message}`, 0);
 		this.currentProgress = 0;
 
 		this.progressStep = INITIAL_PROGRESS_PERCENTAGE / numberOfActions;
@@ -81,7 +81,7 @@ export default class SuggestionProvider {
 					start: textDocument.positionAt(replacement.start),
 					end: textDocument.positionAt(replacement.end)
 				},
-				message: 'Replace: ' + replacement.oldText + ' ==> ' + replacement.newText,
+				message: `Replace: ${replacement.oldText} ==> ${replacement.newText}`,
 				source: 'pAPRika'
 			};
 			diagnostics.push(diagnostic);
