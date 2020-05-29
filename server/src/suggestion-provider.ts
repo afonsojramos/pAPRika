@@ -1,26 +1,27 @@
-import { isNullOrUndefined } from 'util';
+import { isNullOrUndefined } from 'util'
 import {
 	CodeAction,
 	CodeActionKind,
 	Connection,
 	Diagnostic,
 	DiagnosticSeverity,
-	TextDocument
-} from 'vscode-languageserver';
-import Replacement from './replacement';
-import { WorkDoneProgress } from 'vscode-languageserver/lib/progress';
+	TextDocument,
+	TextDocumentContentChangeEvent
+} from 'vscode-languageserver'
+import Replacement from './replacement'
+import { WorkDoneProgress } from 'vscode-languageserver/lib/progress'
 
-const INITIAL_PROGRESS_PERCENTAGE = 25;
+const INITIAL_PROGRESS_PERCENTAGE = 25
 
 export default class SuggestionProvider {
-	private connection: Connection;
-	private diagnosticsDocs: Map<String, Diagnostic[]> = new Map<String, Diagnostic[]>();
-	private currentProgress: number = 0;
-	private progressStep: number = 0;
-	private paprikaProgress: WorkDoneProgress | undefined;
+	private connection: Connection
+	private diagnosticsDocs: Map<String, Diagnostic[]> = new Map<String, Diagnostic[]>()
+	private currentProgress: number = 0
+	private progressStep: number = 0
+	private paprikaProgress: WorkDoneProgress | undefined
 
 	constructor(connection: Connection) {
-		this.connection = connection;
+		this.connection = connection
 	}
 
 	/**
@@ -31,12 +32,12 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	async startProgressFeedback(numberOfActions: number, message: string) {
-		this.paprikaProgress = await this.connection.window.createWorkDoneProgress();
-		this.paprikaProgress.begin(`pAPRika: ${message}`, 0);
-		this.currentProgress = 0;
+		this.paprikaProgress = await this.connection.window.createWorkDoneProgress()
+		this.paprikaProgress.begin(`pAPRika: ${message}`, 0)
+		this.currentProgress = 0
 
-		this.progressStep = INITIAL_PROGRESS_PERCENTAGE / numberOfActions;
-		this.paprikaProgress?.report(Math.ceil(this.progressStep));
+		this.progressStep = INITIAL_PROGRESS_PERCENTAGE / numberOfActions
+		this.paprikaProgress?.report(Math.ceil(this.progressStep))
 	}
 
 	/**
@@ -47,11 +48,11 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	updateProgressFromStep(numberOfActions: number = 0) {
-		if (numberOfActions) this.progressStep = (INITIAL_PROGRESS_PERCENTAGE * 2) / numberOfActions;
+		if (numberOfActions) this.progressStep = (INITIAL_PROGRESS_PERCENTAGE * 2) / numberOfActions
 		else {
-			this.currentProgress += this.progressStep;
+			this.currentProgress += this.progressStep
 
-			this.paprikaProgress?.report(Math.ceil(this.currentProgress));
+			this.paprikaProgress?.report(Math.ceil(this.currentProgress))
 		}
 	}
 
@@ -61,7 +62,7 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	terminateProgress() {
-		this.paprikaProgress?.done();
+		this.paprikaProgress?.done()
 	}
 
 	/**
@@ -72,7 +73,7 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	async suggestChanges(textDocument: TextDocument, replacementList: Replacement[]) {
-		const diagnostics: Diagnostic[] = [];
+		const diagnostics: Diagnostic[] = []
 
 		replacementList.forEach((replacement: Replacement) => {
 			let diagnostic: Diagnostic = {
@@ -83,17 +84,17 @@ export default class SuggestionProvider {
 				},
 				message: `Replace: ${replacement.oldText} ==> ${replacement.newText}`,
 				source: 'pAPRika'
-			};
-			diagnostics.push(diagnostic);
-		});
+			}
+			diagnostics.push(diagnostic)
+		})
 
-		const existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri) || [];
+		const existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri) || []
 		const newDiagnostics = diagnostics.filter((diag) => {
-			return existingDiagnostics?.find((newDiag) => diag === newDiag) ? false : true;
-		});
-		newDiagnostics.push(...existingDiagnostics);
+			return existingDiagnostics?.find((newDiag) => diag === newDiag) ? false : true
+		})
+		newDiagnostics.push(...existingDiagnostics)
 
-		this.updateDiagnostics(textDocument.uri, newDiagnostics);
+		this.updateDiagnostics(textDocument.uri, newDiagnostics)
 	}
 
 	/**
@@ -105,9 +106,20 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	async updateDiagnostics(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<void> {
-		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`);
-		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics });
-		this.diagnosticsDocs.set(textDocumentUri, diagnostics);
+		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`)
+		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
+		this.diagnosticsDocs.set(textDocumentUri, diagnostics)
+	}
+
+	updateRangeOnChange(textDocumentUri: string, change: TextDocumentContentChangeEvent) {
+		if ('range' in change) {
+			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri)
+			currentDiagnostics?.map((diagnostic) => {
+				if (change.range.start < diagnostic.range.start) {
+					console.log(change.range.start.line)
+				}
+			})
+		}
 	}
 
 	/**
@@ -117,9 +129,9 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	resetDiagnostics(textDocumentUri: string) {
-		console.info(`Reset diagnostics for ${textDocumentUri}`);
-		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: [] });
-		this.diagnosticsDocs.set(textDocumentUri, []);
+		console.info(`Reset diagnostics for ${textDocumentUri}`)
+		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: [] })
+		this.diagnosticsDocs.set(textDocumentUri, [])
 	}
 
 	/**
@@ -131,40 +143,40 @@ export default class SuggestionProvider {
 	 */
 	async quickFix(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<CodeAction[]> {
 		if (isNullOrUndefined(diagnostics) || diagnostics.length === 0) {
-			return [];
+			return []
 		}
 
-		const codeActions: CodeAction[] = [];
-		diagnostics.forEach((diag) => {
+		const codeActions: CodeAction[] = []
+		diagnostics.forEach((diagnostic) => {
 			// Skip Diagnostics not from pAPRika
-			if (diag.source !== 'pAPRika') {
-				return;
+			if (diagnostic.source !== 'pAPRika') {
+				return
 			}
 
-			const replaceRegex: RegExp = /.*Replace:.*==>(.*)/g;
-			const parsedText = diag.message.replace(/\s/g, '');
-			const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText);
+			const replaceRegex: RegExp = /.*Replace:.*==>(.*)/g
+			const parsedText = diagnostic.message.replace(/\s/g, '')
+			const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText)
 
 			replaceRegexMatch &&
 				replaceRegexMatch[1] &&
 				codeActions.push({
-					title: diag.message,
+					title: diagnostic.message,
 					kind: CodeActionKind.QuickFix,
-					diagnostics: [diag],
+					diagnostics: [diagnostic],
 					edit: {
 						changes: {
 							[textDocumentUri]: [
 								{
-									range: diag.range,
+									range: diagnostic.range,
 									newText: replaceRegexMatch[1]
 								}
 							]
 						}
 					}
-				});
-			return;
-		});
+				})
+			return
+		})
 
-		return codeActions;
+		return codeActions
 	}
 }

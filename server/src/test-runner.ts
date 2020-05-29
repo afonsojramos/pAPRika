@@ -1,17 +1,17 @@
-import { unlinkSync } from 'fs';
-import * as Mocha from 'mocha';
-import { TextDocument } from 'vscode-languageserver-textdocument';
-import { generateVariations, getTestedFunctionName } from './code-interface';
-import Replacement from './replacement';
-import SuggestionProvider from './suggestion-provider';
+import { unlinkSync } from 'fs'
+import * as Mocha from 'mocha'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import { generateVariations, getTestedFunctionName } from './code-interface'
+import Replacement from './replacement'
+import SuggestionProvider from './suggestion-provider'
 
 interface TestListMap {
-	[key: string]: Mocha.Test[];
+	[key: string]: Mocha.Test[]
 }
 
 interface TestResultObject {
-	test: Mocha.Test;
-	passed: boolean;
+	test: Mocha.Test
+	passed: boolean
 }
 
 /**
@@ -24,66 +24,66 @@ interface TestResultObject {
  * @param {SuggestionProvider} suggestionProvider Code editor suggestion provider.
  */
 function runTestSuite(testSuitePath: string, document: TextDocument, suggestionProvider: SuggestionProvider) {
-	let mocha: Mocha = new Mocha();
-	mocha.addFile(testSuitePath);
-	console.info('Mocha added file: ' + testSuitePath.replace(/^.*[\\\/]/, ''));
-	suggestionProvider.resetDiagnostics(document.uri);
+	let mocha: Mocha = new Mocha()
+	mocha.addFile(testSuitePath)
+	console.info(`Mocha added file: ${testSuitePath.replace(/^.*[\\\/]/, '')}`)
+	suggestionProvider.resetDiagnostics(document.uri)
 
 	// see https://github.com/mochajs/mocha/issues/2783
 	// To be Solved in https://github.com/mochajs/mocha/pull/4234
-	delete require.cache[testSuitePath];
+	delete require.cache[testSuitePath]
 
 	try {
-		let runner: Mocha.Runner = mocha.run();
-		suggestionProvider.startProgressFeedback(runner.total, 'Running Test Suite');
+		let runner: Mocha.Runner = mocha.run()
+		suggestionProvider.startProgressFeedback(runner.total, 'Running Test Suite')
 
-		let failingTests: TestListMap = {};
-		let testResults: TestResultObject[] = [];
+		let failingTests: TestListMap = {}
+		let testResults: TestResultObject[] = []
 
 		runner.on('fail', (test: Mocha.Test) => {
 			testResults.push({
 				test: test,
 				passed: false
-			});
+			})
 
-			const testedFunctionName: string | undefined = getTestedFunctionName(test);
+			const testedFunctionName: string | undefined = getTestedFunctionName(test)
 
 			if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
-				failingTests[testedFunctionName].push(test);
+				failingTests[testedFunctionName].push(test)
 			} else if (testedFunctionName !== undefined) {
-				failingTests[testedFunctionName] = [test];
+				failingTests[testedFunctionName] = [test]
 			}
-		});
+		})
 
 		runner.on('pass', (test: Mocha.Test) => {
 			testResults.push({
 				test: test,
 				passed: true
-			});
-		});
+			})
+		})
 
 		runner.on('test end', () => {
-			suggestionProvider.updateProgressFromStep();
-		});
+			suggestionProvider.updateProgressFromStep()
+		})
 
 		runner.on('end', async () => {
-			suggestionProvider.updateProgressFromStep(Object.keys(failingTests).length);
+			suggestionProvider.updateProgressFromStep(Object.keys(failingTests).length)
 			Object.keys(failingTests).forEach(async (testedFunctionName) => {
 				if (testedFunctionName !== undefined) {
-					await generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider);
-					suggestionProvider.updateProgressFromStep();
+					await generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider)
+					suggestionProvider.updateProgressFromStep()
 				}
-			});
-			suggestionProvider.terminateProgress();
+			})
+			suggestionProvider.terminateProgress()
 
 			/* const openEditor = vscode.window.visibleTextEditors.filter(
 				editor => editor.document.uri === document.uri
 			)[0]; */
 
 			//code.decorate(openEditor, testResults);
-		});
+		})
 	} catch (err) {
-		console.log(err);
+		console.log(err)
 	}
 }
 
@@ -106,32 +106,32 @@ function runTest(
 	functionName: string,
 	suggestionProvider: SuggestionProvider
 ): void {
-	let mocha: Mocha = new Mocha();
-	mocha.addFile(testSuitePath);
-	mocha.fgrep(functionName);
+	let mocha: Mocha = new Mocha()
+	mocha.addFile(testSuitePath)
+	mocha.fgrep(functionName)
 
 	// see https://github.com/mochajs/mocha/issues/2783
-	delete require.cache[require.resolve(testSuitePath)];
+	delete require.cache[require.resolve(testSuitePath)]
 
 	try {
-		let runner: Mocha.Runner = mocha.reporter('min').run();
-		let failingTestsList: Array<Mocha.Test> = [];
+		let runner: Mocha.Runner = mocha.reporter('min').run()
+		let failingTestsList: Array<Mocha.Test> = []
 
 		runner.on('fail', (test: Mocha.Test) => {
-			failingTestsList.push(test);
-		});
+			failingTestsList.push(test)
+		})
 
 		runner.on('end', async () => {
 			if (failingTestsList.length === 0) {
-				await suggestionProvider.suggestChanges(document, replacements);
+				await suggestionProvider.suggestChanges(document, replacements)
 			}
 
-			unlinkSync(testSuitePath);
-		});
+			unlinkSync(testSuitePath)
+		})
 	} catch (err) {
-		console.log(err);
-		unlinkSync(testSuitePath);
+		console.log(err)
+		unlinkSync(testSuitePath)
 	}
 }
 
-export { TestResultObject, runTestSuite, runTest };
+export { TestResultObject, runTestSuite, runTest }
