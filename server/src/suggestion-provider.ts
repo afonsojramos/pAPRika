@@ -107,19 +107,47 @@ export default class SuggestionProvider {
 	 */
 	async updateDiagnostics(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<void> {
 		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`)
-		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
 		this.diagnosticsDocs.set(textDocumentUri, diagnostics)
+		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
 	}
 
 	updateRangeOnChange(textDocumentUri: string, change: TextDocumentContentChangeEvent) {
 		if ('range' in change) {
-			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri)
-			currentDiagnostics?.map((diagnostic) => {
-				if (change.range.start < diagnostic.range.start) {
-					console.log(change.range.start.line)
+			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri) || []
+			const newDiagnostics = currentDiagnostics.map((diagnostic) => {
+				let newDiagnostic: Diagnostic = diagnostic
+				if (
+					change.range.start.line === diagnostic.range.start.line &&
+					change.range.start.line === diagnostic.range.end.line &&
+					change.range.start.character < diagnostic.range.start.character
+				) {
+					console.log('same line')
+				} else if (
+					change.range.start.line < diagnostic.range.start.line &&
+					change.range.end.line < diagnostic.range.start.line
+				) {
+					const changeArray = this.getTextDocumentLines(change.text)
+					if (changeArray.length === 1 && change.range.start.character < diagnostic.range.start.character) {
+						console.log(`Changed ${diagnostic.range.start.character}`)
+						diagnostic.range.start.character += change.text.length
+						diagnostic.range.end.character += change.text.length
+					} else {
+						console.log('oi')
+					}
 				}
+
+				return diagnostic
 			})
+
+			newDiagnostics
+
+			this.updateDiagnostics(textDocumentUri, newDiagnostics)
 		}
+	}
+
+	// Split source string into array of lines
+	getTextDocumentLines(changeText: string) {
+		return changeText.replace(/\r?\n/g, '\r\n').split('\r\n')
 	}
 
 	/**

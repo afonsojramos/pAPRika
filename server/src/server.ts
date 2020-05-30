@@ -140,7 +140,7 @@ connection.onCodeAction((codeActionParams: CodeActionParams) => {
 connection.onDidChangeTextDocument((params) => {
 	console.info(`${params.textDocument.uri} changed`)
 
-	params.contentChanges.map((change: TextDocumentContentChangeEvent) => {
+	params.contentChanges.forEach((change: TextDocumentContentChangeEvent) => {
 		suggestionProvider.updateRangeOnChange(params.textDocument.uri, change)
 	})
 })
