@@ -79,6 +79,7 @@ export default class SuggestionProvider {
 			let diagnostic: Diagnostic = {
 				severity: DiagnosticSeverity.Error,
 				range: {
+					// Outputting wrong positions if document has changed
 					start: textDocument.positionAt(replacement.start),
 					end: textDocument.positionAt(replacement.end)
 				},
