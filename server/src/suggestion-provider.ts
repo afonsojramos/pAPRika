@@ -115,34 +115,45 @@ export default class SuggestionProvider {
 	updateRangeOnChange(textDocumentUri: string, change: TextDocumentContentChangeEvent) {
 		if ('range' in change) {
 			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri) || []
-			const newDiagnostics = currentDiagnostics.map((diagnostic) => {
-				let newDiagnostic: Diagnostic = diagnostic
-				if (
-					change.range.start.line === diagnostic.range.start.line &&
-					change.range.start.line === diagnostic.range.end.line &&
-					change.range.start.character < diagnostic.range.start.character
-				) {
-					console.log('same line')
-				} else if (
-					change.range.start.line < diagnostic.range.start.line &&
-					change.range.end.line < diagnostic.range.start.line
-				) {
+			const updatedDiagnostics = currentDiagnostics.reduce(
+				(prevDiagnostics: Diagnostic[], diagnostic: Diagnostic) => {
 					const changeArray = this.getTextDocumentLines(change.text)
-					if (changeArray.length === 1 && change.range.start.character < diagnostic.range.start.character) {
-						console.log(`Changed ${diagnostic.range.start.character}`)
-						diagnostic.range.start.character += change.text.length
-						diagnostic.range.end.character += change.text.length
-					} else {
-						console.log('oi')
+					if (
+						change.range.end.line <= diagnostic.range.start.line &&
+						change.range.end.character <= diagnostic.range.start.character
+					) {
+						if (change.text.length === 0) {
+							const deletedLinesNum = change.range.end.line - change.range.start.line
+							console.log(`Deleted ${deletedLinesNum} lines`)
+							diagnostic.range.start.line -= deletedLinesNum
+							diagnostic.range.end.line -= deletedLinesNum
+							if (
+								change.range.end.line === diagnostic.range.start.line &&
+								change.range.end.character > diagnostic.range.start.character
+							) {
+								console.log(`Removed Diagnostic`)
+								return prevDiagnostics
+							} else {
+								console.log('remover char')
+							}
+						} else {
+							console.log(`Changed ${diagnostic.range.start.line}`)
+							diagnostic.range.start.line += changeArray.length - 1
+							diagnostic.range.end.line += changeArray.length - 1
+							if (change.range.end.line === diagnostic.range.start.line) {
+								diagnostic.range.start.character += change.text.length
+								diagnostic.range.end.character += change.text.length
+							}
+						}
 					}
-				}
 
-				return diagnostic
-			})
+					prevDiagnostics.push(diagnostic)
+					return prevDiagnostics
+				},
+				[]
+			)
 
-			newDiagnostics
-
-			this.updateDiagnostics(textDocumentUri, newDiagnostics)
+			this.updateDiagnostics(textDocumentUri, updatedDiagnostics)
 		}
 	}
 
