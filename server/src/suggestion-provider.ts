@@ -145,7 +145,13 @@ export default class SuggestionProvider {
 		}
 	}
 
-	// Split source string into array of lines
+	/**
+	 * Split source string into array of lines.
+	 *
+	 * @param {string} changeText
+	 * @returns
+	 * @memberof SuggestionProvider
+	 */
 	getTextDocumentLines(changeText: string) {
 		return changeText.replace(/\r?\n/g, '\r\n').split('\r\n')
 	}
