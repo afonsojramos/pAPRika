@@ -25,7 +25,7 @@ export function activate(context: ExtensionContext) {
 	// Options to control the language client
 	let clientOptions: LanguageClientOptions = {
 		// Register the server for plain text documents
-		documentSelector: [{ scheme: 'file', language: 'javascript' }],
+		documentSelector: ['javascript', 'typescript'],
 		synchronize: {
 			configurationSection: 'pAPRika',
 			// Notify the server about file changes to '.clientrc files contained in the workspace
