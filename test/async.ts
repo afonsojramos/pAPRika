@@ -37,8 +37,8 @@ class AsyncSemaphore {
 }
 
 describe.only('the failing test', () => {
-	it('test #1 {testAsyncQueueBehavior}', () => {
-		fc.assert(
+	it('test #1 {testAsyncQueueBehavior}', async () => {
+		await fc.assert(
 			fc.asyncProperty(
 				fc.array(
 					fc.boolean().map((b) => (b ? 'E' : 'D')),
