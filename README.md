@@ -11,6 +11,27 @@
 
 ![pAPRika v0.0.1](pAPRika/assets/pAPRika-v0.1.gif)
 
+## Usage
+
+On each Test Function of Mocha (`it`) leave an identifier to the function that test is fixing `{mySubstring}`.
+
+Example in JS:
+```js
+function mySubstring(str, i1, i2) {
+	return str.substring(i1, i2)
+}
+
+describe('mySubstring Testing Suite', function () {
+	it('Test Name 1 {mySubstring}', function () {
+		assert.equal(mySubstring('This is a string', 1, 2), 'hi')
+	})
+
+	it('Test Name 2 {mySubstring}', function () {
+		assert.equal(mySubstring('This is a string', 6, 8), 's a')
+	})
+})
+```
+
 ## Structure
 
 ```
