@@ -109,11 +109,12 @@ async function generateVariations(
 	const originalFileContent: string = readFileSync(filePath).toString()
 	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName)
 	let replacementList: Replacement[] = new Array()
+	const extension: string = /(?:\.([^.]+))?$/.exec(filePath)![1]
 	visitDoReplacements(functionNode!, replacementList)
 
 	replacementList.map((replacement, index) => {
 		const variation: string = replaceLines(originalFileContent, replacement)
-		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}${index}.ts`
+		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
 		runTest(variationFileName, document, [replacement], functionName, suggestionProvider)
@@ -130,7 +131,7 @@ async function generateVariations(
 
 	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
 		const variation: string = switchExpressionsVariation
-		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.ts`
+		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
 		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider)

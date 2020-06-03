@@ -109,6 +109,8 @@ connection.onInitialized(() => {
 			connection.console.log('Workspace folder change event received.')
 		})
 	}
+
+	require('ts-node').register()
 })
 
 documents.onDidSave((documentEvent) => {
@@ -155,10 +157,12 @@ connection.onExecuteCommand(async (handler) => {
  * @param {TextDocumentChangeEvent<TextDocument>} documentEvent
  */
 function runPAPRika(document: TextDocument) {
-	if (!hasDiagnosticRelatedInformationCapability)
+	if (!hasDiagnosticRelatedInformationCapability) {
 		connection.window.showErrorMessage('Code Editor has no Diagnostic Related Information Capability')
-	let testSuitePath: string | undefined = uriToFilePath(document.uri)
+		return
+	}
 
+	let testSuitePath: string | undefined = uriToFilePath(document.uri)
 	console.info(`Running pAPRika on: ${testSuitePath}`)
 	testSuitePath !== undefined && runTestSuite(testSuitePath, document, suggestionProvider)
 }
