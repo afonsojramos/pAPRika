@@ -218,22 +218,26 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 }
 
 function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
-	const rhsNode: ts.Node = node.getChildAt(2)
-	const rhsNodeText: string = rhsNode.getText()
-	const replacementPlusOne: Replacement = Replacement.replace(
-		rhsNode.getStart(),
-		rhsNode.getEnd(),
-		rhsNodeText,
-		`(${rhsNodeText} + 1)`
-	)
-	const replacementMinusOne: Replacement = Replacement.replace(
-		rhsNode.getStart(),
-		rhsNode.getEnd(),
-		rhsNodeText,
-		`(${rhsNodeText} - 1)`
-	)
-	replacementList.push(replacementPlusOne)
-	replacementList.push(replacementMinusOne)
+	try {
+		const rhsNode: ts.Node = node.getChildAt(2)
+		const rhsNodeText: string = rhsNode.getText()
+		const replacementPlusOne: Replacement = Replacement.replace(
+			rhsNode.getStart(),
+			rhsNode.getEnd(),
+			rhsNodeText,
+			`(${rhsNodeText} + 1)`
+		)
+		const replacementMinusOne: Replacement = Replacement.replace(
+			rhsNode.getStart(),
+			rhsNode.getEnd(),
+			rhsNodeText,
+			`(${rhsNodeText} - 1)`
+		)
+		replacementList.push(replacementPlusOne)
+		replacementList.push(replacementMinusOne)
+	} catch (error) {
+		console.error(error)
+	}
 }
 
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
