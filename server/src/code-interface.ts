@@ -300,7 +300,7 @@ function replaceLines(originalFile: string, replacement: Replacement): string {
 
 function getTestedFunctionName(test: Mocha.Test): string | undefined {
 	const testTitle: string = test.title
-	const regex: RegExp = new RegExp(/(?<=#fix\s*{).*(?=})/)
+	const regex: RegExp = new RegExp(/(?<={).*(?=})/)
 	const results: RegExpExecArray | null = regex.exec(testTitle)
 
 	if (results !== null && results.length >= 1) {
