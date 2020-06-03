@@ -83,7 +83,7 @@ export default class SuggestionProvider {
 					start: textDocument.positionAt(replacement.start),
 					end: textDocument.positionAt(replacement.end)
 				},
-				message: `Replace: ${replacement.oldText} ==> ${replacement.newText}`,
+				message: `Replace: ${replacement.oldText} with ${replacement.newText}`,
 				source: 'pAPRika'
 			}
 			diagnostics.push(diagnostic)
@@ -199,7 +199,7 @@ export default class SuggestionProvider {
 				return
 			}
 
-			const replaceRegex: RegExp = /.*Replace:.*==>(.*)/g
+			const replaceRegex: RegExp = /.*Replace:.*with(.*)/g
 			const parsedText = diagnostic.message.replace(/\s/g, '')
 			const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText)
 
