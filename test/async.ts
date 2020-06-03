@@ -36,8 +36,8 @@ class AsyncSemaphore {
 	}
 }
 
-describe('the failing test', () => {
-	it('should always contain itself', () => {
+describe.only('the failing test', () => {
+	it('test #1 {testAsyncQueueBehavior}', () => {
 		fc.assert(
 			fc.asyncProperty(
 				fc.array(
