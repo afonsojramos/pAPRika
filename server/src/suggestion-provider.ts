@@ -47,8 +47,9 @@ export default class SuggestionProvider {
 	 * @param {number} [numberOfActions=0] Number of actions for the generation and testing of variations.
 	 * @memberof SuggestionProvider
 	 */
-	updateProgressFromStep(numberOfActions: number = 0) {
-		if (numberOfActions) this.progressStep = (INITIAL_PROGRESS_PERCENTAGE * 2) / numberOfActions
+	updateProgressFromStep(numberOfActions: number = -1) {
+		if (numberOfActions === 0) this.connection.window.showInformationMessage('pAPRika: All tests passed!')
+		else if (numberOfActions > 0) this.progressStep = (INITIAL_PROGRESS_PERCENTAGE * 2) / numberOfActions
 		else {
 			this.currentProgress += this.progressStep
 
