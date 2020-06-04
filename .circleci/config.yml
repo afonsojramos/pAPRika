@@ -2,14 +2,14 @@ version: 2.1
 
 jobs:
   build-extension:
-      docker:
-        - image: circleci/node:lts
-      working_directory: ~/pAPRika
-      steps:
-        - checkout
-        - run:
-            name: NPM install
-            command: npm install
+    docker:
+      - image: circleci/node:lts
+    working_directory: ~/pAPRika
+    steps:
+      - checkout
+      - run:
+          name: NPM install
+          command: npm install
   build-website:
     docker:
       - image: circleci/ruby:latest
@@ -20,7 +20,7 @@ jobs:
           name: Bundle Install
           command: bundle check || bundle install
           working_directory: ~/pAPRika/pAPRika
-      - run: 
+      - run:
           name: Bundle Build
           command: bundle exec jekyll build --verbose
           working_directory: ~/pAPRika/pAPRika
@@ -55,11 +55,15 @@ jobs:
 
 workflows:
   version: 2
-  
-  ci:
+  Build:
     jobs:
       - build-extension
       - build-website
+  Deployment:
+    jobs:
       - deploy-website:
           requires:
             - build-website
+          branches:
+            only:
+              - master
