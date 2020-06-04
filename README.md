@@ -1,6 +1,6 @@
-# ProperFix
+# pAPRika
 
-ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `Fix` small faults in your code.
+**pAPRika** is a Property-Based Automatic Program Repair tool that attempts to Fix small faults in your code.
 
 ## Features
 
@@ -9,11 +9,42 @@ ProperFix is a `Proper`ty-Based Automatic Program Repair tool that attempts to `
 - Live code suggestions
 - Myriad of fault detection
 
-![ProperFix v0.0.1](https://github.com/afonsojramos/ProperFix/blob/master/assets/properfix-v0.0.1.gif)
+![pAPRika v0.0.1](pAPRika/assets/pAPRika-v0.1.gif)
 
-## Requirements
+## Usage
 
-* JavaScript/TypeScript test framework [`mocha`](https://github.com/mochajs/mocha)
+On each Test Function of Mocha (`it`) leave an identifier to the function that test is fixing `{mySubstring}`.
+
+Example in JS:
+```js
+function mySubstring(str, i1, i2) {
+	return str.substring(i1, i2)
+}
+
+describe('mySubstring Testing Suite', function () {
+	it('Test Name 1 {mySubstring}', function () {
+		assert.equal(mySubstring('This is a string', 1, 2), 'hi')
+	})
+
+	it('Test Name 2 {mySubstring}', function () {
+		assert.equal(mySubstring('This is a string', 6, 8), 's a')
+	})
+})
+```
+
+## Structure
+
+```
+.
+├── client // Language Client
+│   ├── src
+│   │   ├── test // End to End tests for Language Client / Server
+│   │   └── extension.ts // Language Client entry point
+├── package.json // The extension manifest.
+└── server // Language Server
+    └── src
+        └── server.ts // Language Server entry point
+```
 
 <!-- ## Extension Settings
 
@@ -30,11 +61,18 @@ This extension contributes the following settings:
 
 Lacks the. -->
 
-## Release Notes
+## Development
 
-### 0.0.1
-
-Initial release of ProperFix without Property-Based Testing.
+- Run `npm install` in this folder. This installs all necessary npm modules in both the client and server folder
+- Open VS Code on this folder.
+- Press Ctrl+Shift+B to compile the client and server.
+- Switch to the Debug view.
+- Select `Launch Client` from the drop-down.
+- Run the launch config.
+- If you want to debug the server as well use the launch configuration `Attach to Server`
+- In the [Extension Development Host] instance of VSCode, open a document in 'plain text' language mode.
+  - Type `j` or `t` to see `Javascript` and `TypeScript` completion.
+  - Enter text content such as `AAA aaa BBB`. The extension will emit diagnostics for all words in all-uppercase.
 
 ***Enjoy!***
 

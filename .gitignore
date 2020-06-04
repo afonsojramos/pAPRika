@@ -1,2 +1,5 @@
-node_modules/
-out/
+out
+node_modules
+client/server
+.vscode-test
+*.vsix
