@@ -34,7 +34,7 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 	delete require.cache[testSuitePath]
 
 	try {
-		let runner: Mocha.Runner = mocha.reporter('dot').run()
+		let runner: Mocha.Runner = mocha.run()
 		suggestionProvider.startProgressFeedback(runner.total, 'Running Test Suite')
 
 		let failingTests: TestListMap = {}

@@ -129,7 +129,9 @@ async function generateVariations(
 
 	replacementList = []
 
-	const originalFunction: string = functionNode!.getText()
+	const originalFunction: string = ts.isFunctionDeclaration(functionNode)
+		? functionNode!.getText()
+		: functionNode!.parent.getText()
 	const switchExpressionsVariations: string[] = switchExpressions(
 		originalFileContent,
 		originalFunction,
