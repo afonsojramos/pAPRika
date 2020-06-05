@@ -357,11 +357,11 @@ function getTSNodeText(node: ts.Node): string {
 	return ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, tempSourceFile)
 }
 
-function isFunctionName(comparable: string, functionNode: ts.FunctionDeclaration): boolean {
-	const identifier: ts.Identifier | undefined = functionNode.name
+function isFunctionName(comparable: string, functionNode: ts.FunctionDeclaration | ts.VariableDeclaration): boolean {
+	const identifier: ts.Identifier | ts.ObjectBindingPattern | ts.ArrayBindingPattern | undefined = functionNode.name
 
 	if (identifier) {
-		return identifier.getText() === comparable
+		return comparable === (identifier.getText() || ('text' in identifier ? identifier.text : ''))
 	}
 
 	return false
