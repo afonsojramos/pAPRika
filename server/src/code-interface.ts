@@ -107,7 +107,14 @@ async function generateVariations(
 	suggestionProvider: SugestionProvider
 ) {
 	const originalFileContent: string = readFileSync(filePath).toString()
-	const functionNode: ts.FunctionDeclaration | undefined = getFunctionDeclaration(filePath, functionName)
+	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | undefined =
+		getFunctionDeclaration(filePath, functionName) || getArrowFunctionNode(filePath, functionName)
+
+	if (!functionNode) {
+		console.error('ERROR: Could not find a function with the name provided in the failing test')
+		return
+	}
+
 	let replacementList: Replacement[] = new Array()
 	const extension: string = /(?:\.([^.]+))?$/.exec(filePath)![1]
 	visitDoReplacements(functionNode!, replacementList)
