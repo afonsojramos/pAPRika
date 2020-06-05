@@ -55,12 +55,11 @@ jobs:
 
 workflows:
   version: 2
-  Build:
+
+  build-deploy:
     jobs:
       - build-extension
       - build-website
-  Deployment:
-    jobs:
       - deploy-website:
           requires:
             - build-website
