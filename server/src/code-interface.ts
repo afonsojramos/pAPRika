@@ -139,23 +139,27 @@ async function generateVariations(
 }
 
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
-	if (ts.isBinaryExpression(node)) {
-		generateSwitchVariants(node, replacementList)
-		generateParenthesesVariants(node, replacementList)
-		generateOffByOneVariants(node, replacementList)
-		generateOperatorVariants(node, replacementList)
-	}
+	try {
+		if (ts.isBinaryExpression(node)) {
+			generateSwitchVariants(node, replacementList)
+			generateParenthesesVariants(node, replacementList)
+			generateOffByOneVariants(node, replacementList)
+			generateOperatorVariants(node, replacementList)
+		}
 
-	if (ts.isIdentifier(node)) {
-		generateOffByOneIdentifierVariants(node, replacementList)
-	}
+		if (ts.isIdentifier(node)) {
+			generateOffByOneIdentifierVariants(node, replacementList)
+		}
 
-	if (ts.isVariableDeclaration(node)) {
-		generateOffByOneVariants(node, replacementList)
-	}
+		if (ts.isVariableDeclaration(node)) {
+			generateOffByOneVariants(node, replacementList)
+		}
 
-	if (ts.isElementAccessExpression(node)) {
-		generateOffByOneVariants(node, replacementList)
+		if (ts.isElementAccessExpression(node)) {
+			generateOffByOneVariants(node, replacementList)
+		}
+	} catch (error) {
+		console.error(error)
 	}
 
 	ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList))
@@ -218,26 +222,22 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 }
 
 function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
-	try {
-		const rhsNode: ts.Node = node.getChildAt(2)
-		const rhsNodeText: string = rhsNode.getText()
-		const replacementPlusOne: Replacement = Replacement.replace(
-			rhsNode.getStart(),
-			rhsNode.getEnd(),
-			rhsNodeText,
-			`(${rhsNodeText} + 1)`
-		)
-		const replacementMinusOne: Replacement = Replacement.replace(
-			rhsNode.getStart(),
-			rhsNode.getEnd(),
-			rhsNodeText,
-			`(${rhsNodeText} - 1)`
-		)
-		replacementList.push(replacementPlusOne)
-		replacementList.push(replacementMinusOne)
-	} catch (error) {
-		console.error(error)
-	}
+	const rhsNode: ts.Node = node.getChildAt(2)
+	const rhsNodeText: string = rhsNode.getText()
+	const replacementPlusOne: Replacement = Replacement.replace(
+		rhsNode.getStart(),
+		rhsNode.getEnd(),
+		rhsNodeText,
+		`(${rhsNodeText} + 1)`
+	)
+	const replacementMinusOne: Replacement = Replacement.replace(
+		rhsNode.getStart(),
+		rhsNode.getEnd(),
+		rhsNodeText,
+		`(${rhsNodeText} - 1)`
+	)
+	replacementList.push(replacementPlusOne)
+	replacementList.push(replacementMinusOne)
 }
 
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
