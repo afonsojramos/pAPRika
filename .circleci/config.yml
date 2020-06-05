@@ -56,10 +56,13 @@ jobs:
 workflows:
   version: 2
 
-  ci:
+  build-deploy:
     jobs:
       - build-extension
       - build-website
       - deploy-website:
           requires:
             - build-website
+          filters:
+            branches:
+              only: master
