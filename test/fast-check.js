@@ -1,9 +1,13 @@
 const fc = require('fast-check')
 
 // Code under test
-function contains(text, pattern){
+const contains = (text, pattern) => {
 	return text.indexOf(pattern) > 0
 }
+
+//const contains = (text, pattern) => text.indexOf(pattern) > 0
+
+//const contains = text => text.indexOf(2) > 0
 
 // Properties
 describe('properties', () => {
