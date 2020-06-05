@@ -327,6 +327,31 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode))
 }
 
+function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowFunction | undefined {
+	const sourceFile: ts.SourceFile = ts.createSourceFile(
+		'tmpDeclaration.ts',
+		readFileSync(filePath).toString(),
+		ts.ScriptTarget.Latest,
+		true
+	)
+	const syntaxList: ts.Node = sourceFile.getChildAt(0)
+	const variableStatements: ts.VariableStatement[] = syntaxList.getChildren().filter(ts.isVariableStatement)
+
+	const arrowFunctionDeclarations = variableStatements.find((variableStatement) =>
+		variableStatement.declarationList.declarations.find((functionNode) =>
+			isFunctionName(functionName, functionNode)
+		)
+	)
+	const variableDeclarationList = arrowFunctionDeclarations?.getChildren().find(ts.isVariableDeclarationList)
+	const syntaxListArrow = variableDeclarationList
+		?.getChildren()
+		.find((node) => node.kind === ts.SyntaxKind.SyntaxList)
+	const variableDeclaration = syntaxListArrow?.getChildren().find(ts.isVariableDeclaration)
+	const arrowFunction = variableDeclaration?.getChildren().find(ts.isArrowFunction)
+
+	return arrowFunction
+}
+
 function getTSNodeText(node: ts.Node): string {
 	const tempSourceFile: ts.SourceFile = ts.createSourceFile('temp.js', '', ts.ScriptTarget.Latest, true)
 	return ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, tempSourceFile)
