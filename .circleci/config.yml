@@ -63,6 +63,3 @@ workflows:
       - deploy-website:
           requires:
             - build-website
-          branches:
-            only:
-              - master
