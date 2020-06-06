@@ -14,14 +14,16 @@ const mathOperators: number[] = [
 	ts.SyntaxKind.SlashToken,
 	ts.SyntaxKind.AsteriskToken,
 	ts.SyntaxKind.MinusToken,
-	ts.SyntaxKind.PlusToken
+	ts.SyntaxKind.PlusToken,
+	ts.SyntaxKind.PercentToken
 ]
 
 const mathOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.SlashToken]: '/',
 	[ts.SyntaxKind.AsteriskToken]: '*',
 	[ts.SyntaxKind.MinusToken]: '-',
-	[ts.SyntaxKind.PlusToken]: '+'
+	[ts.SyntaxKind.PlusToken]: '+',
+	[ts.SyntaxKind.PercentToken]: '%'
 }
 
 const comparisonOperators: number[] = [
