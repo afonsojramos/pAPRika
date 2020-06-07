@@ -113,6 +113,13 @@ export default class SuggestionProvider {
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
 	}
 
+	/**
+	 * Update diagnostics' range on document change
+	 *
+	 * @param {string} textDocumentUri
+	 * @param {TextDocumentContentChangeEvent} change
+	 * @memberof SuggestionProvider
+	 */
 	updateRangeOnChange(textDocumentUri: string, change: TextDocumentContentChangeEvent) {
 		if ('range' in change) {
 			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri) || []
