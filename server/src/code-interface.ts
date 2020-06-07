@@ -314,7 +314,7 @@ function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[])
  * @param {Replacement[]} replacementList Replacement List passed as reference.
  */
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
-	const nodeText: string = node.getFullText()
+	const nodeText: string = node.getFullText().replace(/\s/g, '')
 	const replacementPlusOne: Replacement = Replacement.replace(
 		node.getStart(),
 		node.getEnd(),
