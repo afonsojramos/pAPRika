@@ -50,6 +50,13 @@ const comparisonOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.GreaterThanToken]: '>'
 }
 
+const logicalOperators: number[] = [ts.SyntaxKind.AmpersandAmpersandToken, ts.SyntaxKind.BarBarToken]
+
+const logicalOperatorsToText: SyntaxKindToTextMap = {
+	[ts.SyntaxKind.AmpersandAmpersandToken]: '&&',
+	[ts.SyntaxKind.BarBarToken]: '||'
+}
+
 // TODO: Find alternative to Test PASS and FAIL Decoration
 /* const passDecorationType = vscode.window.createTextEditorDecorationType({
 	after: {
@@ -249,6 +256,21 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 			.filter((op) => op !== operator.kind)
 			.forEach((newOperator) => {
 				const operatorText = comparisonOperatorsToText[newOperator]
+				const replacement: Replacement = Replacement.replace(
+					operator.getStart(),
+					operator.getEnd(),
+					operator.getText(),
+					operatorText
+				)
+				replacementList.push(replacement)
+			})
+	}
+
+	if (logicalOperators.includes(operator.kind)) {
+		logicalOperators
+			.filter((op) => op !== operator.kind)
+			.forEach((newOperator) => {
+				const operatorText = logicalOperatorsToText[newOperator]
 				const replacement: Replacement = Replacement.replace(
 					operator.getStart(),
 					operator.getEnd(),
