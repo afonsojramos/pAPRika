@@ -72,10 +72,6 @@ connection.onInitialize((params: InitializeParams) => {
 	const result: InitializeResult = {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Incremental,
-			// Tell the client that the server supports code completion
-			completionProvider: {
-				resolveProvider: true
-			},
 			executeCommandProvider: {
 				commands: ['pAPRika.runAPRSuite']
 			}
