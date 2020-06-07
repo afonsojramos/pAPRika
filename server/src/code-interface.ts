@@ -102,6 +102,14 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 	}
 } */
 
+/**
+ * Exported function to generate variations of a `functionName` within a file.
+ *
+ * @param {string} filePath File path of the given file.
+ * @param {string} functionName Name of function being tested.
+ * @param {TextDocument} document Text document
+ * @param {SugestionProvider} suggestionProvider
+ */
 async function generateVariations(
 	filePath: string,
 	functionName: string,
@@ -110,7 +118,7 @@ async function generateVariations(
 ) {
 	const originalFileContent: string = readFileSync(filePath).toString()
 	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | undefined =
-		getFunctionDeclaration(filePath, functionName) || getArrowFunctionNode(filePath, functionName)
+		getFunctionDeclarationNode(filePath, functionName) || getArrowFunctionNode(filePath, functionName)
 
 	if (!functionNode) {
 		console.error('ERROR: Could not find a function with the name provided in the failing test')
@@ -149,6 +157,12 @@ async function generateVariations(
 	})
 }
 
+/**
+ * Creates `Replacements` on a given node and its respective children.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 	try {
 		if (ts.isBinaryExpression(node)) {
@@ -176,6 +190,14 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 	ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList))
 }
 
+/**
+ * Switches expressions order for a given function.
+ *
+ * @param {string} fileText 
+ * @param {string} functionText Function's content.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ * @returns {string[]} Respective variations.
+ */
 function switchExpressions(fileText: string, functionText: string, replacementList: Replacement[]): string[] {
 	const functionLines: string[] = functionText.split('\n')
 	const functionStartPos: number = fileText.indexOf(functionText)
@@ -199,6 +221,12 @@ function switchExpressions(fileText: string, functionText: string, replacementLi
 	return variations
 }
 
+/**
+ * Generates Operator Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function generateOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
 	const operator: ts.Node = node.getChildAt(1)
 	if (mathOperators.includes(operator.kind)) {
@@ -232,6 +260,12 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 	}
 }
 
+/**
+ * Generates Off By One Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[]) {
 	const rhsNode: ts.Node = node.getChildAt(2)
 	const rhsNodeText: string = rhsNode.getText()
@@ -251,6 +285,12 @@ function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[])
 	replacementList.push(replacementMinusOne)
 }
 
+/**
+ * Generates Off By One Identifier Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Replacement[]) {
 	const nodeText: string = node.getFullText()
 	const replacementPlusOne: Replacement = Replacement.replace(
@@ -269,6 +309,12 @@ function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Repl
 	replacementList.push(replacementMinusOne)
 }
 
+/**
+ * Generates Switch Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function generateSwitchVariants(node: ts.Node, replacementList: Replacement[]) {
 	const lhsNode: ts.Node = node.getChildAt(0)
 	const lhsNodeText: string = lhsNode.getText()
@@ -286,6 +332,12 @@ function generateSwitchVariants(node: ts.Node, replacementList: Replacement[]) {
 	replacementList.push(replacement)
 }
 
+/**
+ * Generates Parethesis Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
 function generateParenthesesVariants(node: ts.Node, replacementList: Replacement[]) {
 	const lhsNode: ts.Node = node.getChildAt(0)
 	const lhsNodeText: string = lhsNode.getText()
@@ -313,6 +365,12 @@ function replaceLines(originalFile: string, replacement: Replacement): string {
 	return newFile
 }
 
+/**
+ * Extracts the function name from a Mocha test.
+ *
+ * @param {Mocha.Test} test The Mocha test.
+ * @returns {(string | undefined)} The function's name.
+ */
 function getTestedFunctionName(test: Mocha.Test): string | undefined {
 	const testTitle: string = test.title
 	const regex: RegExp = new RegExp(/(?<={).*(?=})/)
@@ -325,7 +383,14 @@ function getTestedFunctionName(test: Mocha.Test): string | undefined {
 	return undefined
 }
 
-function getFunctionDeclaration(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
+/**
+ * Finds a Function Declaration Node with a specific name in a file.
+ *
+ * @param {string} filePath The corresponding file path.
+ * @param {string} functionName The function's name to be found.
+ * @returns {(ts.FunctionDeclaration | undefined)}The Function Declaration Node.
+ */
+function getFunctionDeclarationNode(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
 	const sourceFile: ts.SourceFile = ts.createSourceFile(
 		'tmpDeclaration.ts',
 		readFileSync(filePath).toString(),
@@ -338,6 +403,13 @@ function getFunctionDeclaration(filePath: string, functionName: string): ts.Func
 	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode))
 }
 
+/**
+ * Finds an Arrow Function Node with a specific name in a file.
+ *
+ * @param {string} filePath The corresponding file path.
+ * @param {string} functionName The function's name to be found.
+ * @returns {(ts.ArrowFunction | undefined)} The Arrow Function Node.
+ */
 function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowFunction | undefined {
 	const sourceFile: ts.SourceFile = ts.createSourceFile(
 		'tmpDeclaration.ts',
@@ -368,6 +440,14 @@ function getTSNodeText(node: ts.Node): string {
 	return ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, tempSourceFile)
 }
 
+/**
+ * Verifies if provided function name in `comparable` is the same as
+ * the provided `functionNode`'s name.
+ *
+ * @param {string} comparable Function name string.
+ * @param {(ts.FunctionDeclaration | ts.VariableDeclaration)} functionNode Function node to both `FunctionDeclaration` and `VariableDeclaration` to allow for both function declarations and arrow functions.
+ * @returns {boolean} Respective boolean for the verification.
+ */
 function isFunctionName(comparable: string, functionNode: ts.FunctionDeclaration | ts.VariableDeclaration): boolean {
 	const identifier: ts.Identifier | ts.ObjectBindingPattern | ts.ArrayBindingPattern | undefined = functionNode.name
 
