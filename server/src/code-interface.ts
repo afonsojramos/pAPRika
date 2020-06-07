@@ -193,7 +193,7 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 /**
  * Switches expressions order for a given function.
  *
- * @param {string} fileText 
+ * @param {string} fileText File's content.
  * @param {string} functionText Function's content.
  * @param {Replacement[]} replacementList Replacement List passed as reference.
  * @returns {string[]} Respective variations.
