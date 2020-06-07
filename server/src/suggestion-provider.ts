@@ -66,6 +66,13 @@ export default class SuggestionProvider {
 		this.paprikaProgress?.done()
 	}
 
+	sendWarningMessage(error: Error) {
+		this.connection.window.showWarningMessage(
+			`pAPRika - ${error.name}: ${error.message} (check pAPRika's output for more information)`
+		)
+		error.stack && console.error(`${error.name}: ${error.message}\n${error.stack}`)
+	}
+
 	/**
 	 * Sends suggested changes back to the code editor.
 	 *
@@ -108,7 +115,9 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	async updateDiagnostics(textDocumentUri: string, diagnostics: Diagnostic[]): Promise<void> {
-		console.info(`Update diagnostics for ${textDocumentUri}: ${diagnostics.length} diagnostics sent`)
+		console.info(
+			`Update diagnostics for ${textDocumentUri.replace(/^.*[\\\/]/, '')}: ${diagnostics.length} diagnostics sent`
+		)
 		this.diagnosticsDocs.set(textDocumentUri, diagnostics)
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
 	}
@@ -125,7 +134,7 @@ export default class SuggestionProvider {
 			const currentDiagnostics = this.diagnosticsDocs.get(textDocumentUri) || []
 			const updatedDiagnostics = currentDiagnostics.reduce(
 				(prevDiagnostics: Diagnostic[], diagnostic: Diagnostic) => {
-					const changeArray = this.getTextDocumentLines(change.text)
+					const changeArray = this.getLines(change.text)
 					if (
 						change.range.end.line <= diagnostic.range.start.line &&
 						change.range.end.character <= diagnostic.range.start.character
@@ -172,7 +181,7 @@ export default class SuggestionProvider {
 	 * @returns
 	 * @memberof SuggestionProvider
 	 */
-	getTextDocumentLines(changeText: string) {
+	getLines(changeText: string) {
 		return changeText.replace(/\r?\n/g, '\r\n').split('\r\n')
 	}
 
@@ -183,7 +192,7 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	resetDiagnostics(textDocumentUri: string) {
-		console.info(`Reset diagnostics for ${textDocumentUri}`)
+		console.info(`Reset diagnostics for ${textDocumentUri.replace(/^.*[\\\/]/, '')}`)
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: [] })
 		this.diagnosticsDocs.set(textDocumentUri, [])
 	}

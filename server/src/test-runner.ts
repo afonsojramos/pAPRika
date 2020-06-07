@@ -82,8 +82,8 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 
 			//code.decorate(openEditor, testResults);
 		})
-	} catch (err) {
-		console.log(err)
+	} catch (error) {
+		suggestionProvider.sendWarningMessage(error)
 	}
 }
 

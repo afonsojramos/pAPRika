@@ -191,7 +191,7 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 			generateOffByOneVariants(node, replacementList)
 		}
 	} catch (error) {
-		console.error(error)
+		console.warn(`ERROR: ${error}`)
 	}
 
 	ts.forEachChild(node, (child) => visitDoReplacements(child, replacementList))
@@ -484,4 +484,4 @@ function syntaxKindToName(kind: ts.SyntaxKind): string {
 	return (<any>ts).SyntaxKind[kind]
 }
 
-export { generateVariations, getTestedFunctionName, getFunctionDeclaration }
+export { generateVariations, getTestedFunctionName }
