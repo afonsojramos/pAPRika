@@ -16,6 +16,10 @@
   <a href="https://mochajs.org/">Mocha</a>
   <br>
   <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a>
+  <br>
+  <br>
+  <a href="https://app.circleci.com/pipelines/github/afonsojramos/pAPRika"> <img src="https://circleci.com/gh/afonsojramos/pAPRika.svg?style=shield&circle-token=f17b0877cd06b72ce45d01a6224f19eb435d269d"></a>
+  <img src='https://bettercodehub.com/edge/badge/afonsojramos/pAPRika?branch=master&token=9dc668864992fc676ce1d34c63c045705f7c90e0'>
 </p>
 
 ## Features
