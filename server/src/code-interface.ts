@@ -205,6 +205,10 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 		if (isBooleanKind(node)) {
 			generateBooleanVariant(node, replacementList)
 		}
+
+		if (ts.isPrefixUnaryExpression(node)) {
+			generateRemovePrefixVariant(node, replacementList)
+		}
 	} catch (error) {
 		console.warn(`ERROR: ${error}`)
 	}
@@ -367,6 +371,18 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
 	)
 	replacementList.push(replacementLeftPar)
 	replacementList.push(replacementRightPar)
+}
+
+/**
+ * Generates Remove Prefix Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
+function generateRemovePrefixVariant(node: ts.Node, replacementList: Replacement[]) {
+	const prefix: ts.Node = node.getChildAt(0)
+	const replacement: Replacement = Replacement.replace(prefix.getStart(), prefix.getEnd(), prefix.getText(), '')
+	replacementList.push(replacement)
 }
 
 /**
