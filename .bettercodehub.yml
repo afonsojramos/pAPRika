@@ -1,7 +1,8 @@
 component_depth: 1
 languages:
-- typescript
-- javascript
-- script
+  - typescript
+  - javascript
+  - script
 exclude:
   - /pAPRika/.*
+  - server/src/server.ts
