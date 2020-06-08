@@ -70,9 +70,9 @@ const failDecorationType = vscode.window.createTextEditorDecorationType({
 		contentText: ' // failed',
 		textDecoration: 'none; color: #DC143C; opacity: 0.35'
 	}
-}); */
+});
 
-/* function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
+function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
 	let documentText: string = editor.document.getText();
 	let documentLines: string[] = documentText.split('\n');
 	let testLines: number[] = [];

@@ -76,11 +76,13 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 			})
 			suggestionProvider.terminateProgress()
 
+			// TODO: Implement Decorator through client-side VSCodeCommand
 			/* const openEditor = vscode.window.visibleTextEditors.filter(
 				editor => editor.document.uri === document.uri
-			)[0]; */
+			)[0]; 
 
-			//code.decorate(openEditor, testResults);
+			code.decorate(openEditor, testResults);
+			*/
 		})
 	} catch (error) {
 		suggestionProvider.sendWarningMessage(error)
