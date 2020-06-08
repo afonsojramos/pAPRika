@@ -57,6 +57,10 @@ const logicalOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.BarBarToken]: '||'
 }
 
+const operators = [mathOperators, comparisonOperators, logicalOperators]
+
+const operatorsToText = [mathOperatorsToText, comparisonOperatorsToText, logicalOperatorsToText]
+
 // TODO: Find alternative to Test PASS and FAIL Decoration
 /* const passDecorationType = vscode.window.createTextEditorDecorationType({
 	after: {
@@ -236,49 +240,22 @@ function switchExpressions(fileText: string, functionText: string, replacementLi
  */
 function generateOperatorVariants(node: ts.Node, replacementList: Replacement[]) {
 	const operator: ts.Node = node.getChildAt(1)
-	if (mathOperators.includes(operator.kind)) {
-		mathOperators
-			.filter((op) => op !== operator.kind)
-			.forEach((newOperator) => {
-				const operatorText = mathOperatorsToText[newOperator]
-				const replacement: Replacement = Replacement.replace(
-					operator.getStart(),
-					operator.getEnd(),
-					operator.getText(),
-					operatorText
-				)
-				replacementList.push(replacement)
-			})
-	}
 
-	if (comparisonOperators.includes(operator.kind)) {
-		comparisonOperators
-			.filter((op) => op !== operator.kind)
-			.forEach((newOperator) => {
-				const operatorText = comparisonOperatorsToText[newOperator]
-				const replacement: Replacement = Replacement.replace(
-					operator.getStart(),
-					operator.getEnd(),
-					operator.getText(),
-					operatorText
-				)
-				replacementList.push(replacement)
-			})
-	}
-
-	if (logicalOperators.includes(operator.kind)) {
-		logicalOperators
-			.filter((op) => op !== operator.kind)
-			.forEach((newOperator) => {
-				const operatorText = logicalOperatorsToText[newOperator]
-				const replacement: Replacement = Replacement.replace(
-					operator.getStart(),
-					operator.getEnd(),
-					operator.getText(),
-					operatorText
-				)
-				replacementList.push(replacement)
-			})
+	for (let opIdx = 0; opIdx < operators.length; opIdx++) {
+		if (operators[opIdx].includes(operator.kind)) {
+			operators[opIdx]
+				.filter((op) => op !== operator.kind)
+				.forEach((newOperator) => {
+					const operatorText = operatorsToText[opIdx][newOperator]
+					const replacement: Replacement = Replacement.replace(
+						operator.getStart(),
+						operator.getEnd(),
+						operator.getText(),
+						operatorText
+					)
+					replacementList.push(replacement)
+				})
+		}
 	}
 }
 

@@ -131,7 +131,6 @@ function runTest(
 			unlinkSync(testSuitePath)
 		})
 	} catch (err) {
-		console.log(err)
 		unlinkSync(testSuitePath)
 	}
 }
