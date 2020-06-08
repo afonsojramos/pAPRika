@@ -4,4 +4,4 @@ languages:
 - javascript
 - script
 exclude:
-  - /pAPRika/
+  - /pAPRika/.*
