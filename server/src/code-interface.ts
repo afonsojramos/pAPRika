@@ -358,6 +358,13 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
 	replacementList.push(replacementRightPar)
 }
 
+/**
+ * Replace lines in original file based on `replacement` and returns updated file.
+ *
+ * @param {string} originalFile Original file content.
+ * @param {Replacement} replacement Replacement.
+ * @returns {string} New file content.
+ */
 function replaceLines(originalFile: string, replacement: Replacement): string {
 	let newFile: string = originalFile
 	newFile = newFile.slice(0, replacement.start) + replacement.newText + newFile.slice(replacement.end, newFile.length)
