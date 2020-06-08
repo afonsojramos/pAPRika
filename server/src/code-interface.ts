@@ -390,13 +390,7 @@ function getTestedFunctionName(test: Mocha.Test): string | undefined {
  * @returns {(ts.FunctionDeclaration | undefined)}The Function Declaration Node.
  */
 function getFunctionDeclarationNode(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
-	const sourceFile: ts.SourceFile = ts.createSourceFile(
-		'tmpDeclaration.ts',
-		readFileSync(filePath).toString(),
-		ts.ScriptTarget.Latest,
-		true
-	)
-	const syntaxList: ts.Node = sourceFile.getChildAt(0)
+	const syntaxList: ts.Node = getSyntaxList(filePath)
 	const functionDeclarations: ts.FunctionDeclaration[] = syntaxList.getChildren().filter(ts.isFunctionDeclaration)
 
 	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode))
@@ -410,13 +404,7 @@ function getFunctionDeclarationNode(filePath: string, functionName: string): ts.
  * @returns {(ts.ArrowFunction | undefined)} The Arrow Function Node.
  */
 function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowFunction | undefined {
-	const sourceFile: ts.SourceFile = ts.createSourceFile(
-		'tmpDeclaration.ts',
-		readFileSync(filePath).toString(),
-		ts.ScriptTarget.Latest,
-		true
-	)
-	const syntaxList: ts.Node = sourceFile.getChildAt(0)
+	const syntaxList: ts.Node = getSyntaxList(filePath)
 	const variableStatements: ts.VariableStatement[] = syntaxList.getChildren().filter(ts.isVariableStatement)
 
 	const arrowFunctionDeclarations = variableStatements.find((variableStatement) =>
@@ -432,6 +420,22 @@ function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowF
 	const arrowFunction = variableDeclaration?.getChildren().find(ts.isArrowFunction)
 
 	return arrowFunction
+}
+
+/**
+ * Return syntax list of a given file.
+ *
+ * @param {string} filePath Path of corresponding file.
+ * @returns {ts.Node} Node of the syntax list.
+ */
+function getSyntaxList(filePath: string): ts.Node {
+	const sourceFile: ts.SourceFile = ts.createSourceFile(
+		'tmpDeclaration.ts',
+		readFileSync(filePath).toString(),
+		ts.ScriptTarget.Latest,
+		true
+	)
+	return sourceFile.getChildAt(0)
 }
 
 function getTSNodeText(node: ts.Node): string {
