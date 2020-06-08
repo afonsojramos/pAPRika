@@ -5,4 +5,4 @@ languages:
   - script
 exclude:
   - /pAPRika/.*
-  - server/src/server.ts
+  - /server/src/server.ts

@@ -5,5 +5,26 @@
 	"singleQuote": true,
 	"printWidth": 120,
 	"useTabs": true,
-	"parser": "babel-ts"
+	"parser": "babel-ts",
+	"overrides": [
+		{
+			"files": ".prettierrc",
+			"options": { "parser": "json" }
+		},
+		{
+			"files": "*.json",
+			"options": { "parser": "json" }
+		},
+		{
+			"files": "*.md",
+			"options": { "parser": "markdown" }
+		},
+		{
+			"files": "*.yml",
+			"options": {
+				"parser": "yaml",
+				"tabWidth": 2
+			}
+		}
+	]
 }
