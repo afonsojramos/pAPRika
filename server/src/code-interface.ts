@@ -57,6 +57,13 @@ const logicalOperatorsToText: SyntaxKindToTextMap = {
 	[ts.SyntaxKind.BarBarToken]: '||'
 }
 
+const booleanOperators: number[] = [ts.SyntaxKind.FalseKeyword, ts.SyntaxKind.TrueKeyword]
+
+const booleanOperatorsToText: SyntaxKindToTextMap = {
+	[ts.SyntaxKind.FalseKeyword]: 'false',
+	[ts.SyntaxKind.TrueKeyword]: 'true'
+}
+
 const operators = [mathOperators, comparisonOperators, logicalOperators]
 
 const operatorsToText = [mathOperatorsToText, comparisonOperatorsToText, logicalOperatorsToText]
@@ -193,6 +200,10 @@ function visitDoReplacements(node: ts.Node, replacementList: Replacement[]) {
 
 		if (ts.isElementAccessExpression(node)) {
 			generateOffByOneVariants(node, replacementList)
+		}
+
+		if (isBooleanKind(node)) {
+			generateBooleanVariant(node, replacementList)
 		}
 	} catch (error) {
 		console.warn(`ERROR: ${error}`)
@@ -427,6 +438,21 @@ function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowF
 	const arrowFunction = variableDeclaration?.getChildren().find(ts.isArrowFunction)
 
 	return arrowFunction
+}
+
+function generateBooleanVariant(node: ts.Node, replacementList: Replacement[]) {
+	const operatorText = !(booleanOperatorsToText[node.kind] === 'true')
+	const replacement: Replacement = Replacement.replace(
+		node.getStart(),
+		node.getEnd(),
+		node.getText(),
+		operatorText.toString()
+	)
+	replacementList.push(replacement)
+}
+
+function isBooleanKind(node: ts.Node) {
+	return booleanOperators.includes(node.kind)
 }
 
 /**
