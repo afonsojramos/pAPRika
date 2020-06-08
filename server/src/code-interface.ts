@@ -370,6 +370,33 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
 }
 
 /**
+ * Generates Boolean Variants on a given node.
+ *
+ * @param {ts.Node} node The given node.
+ * @param {Replacement[]} replacementList Replacement List passed as reference.
+ */
+function generateBooleanVariant(node: ts.Node, replacementList: Replacement[]) {
+	const operatorText = !(booleanOperatorsToText[node.kind] === 'true')
+	const replacement: Replacement = Replacement.replace(
+		node.getStart(),
+		node.getEnd(),
+		node.getText(),
+		operatorText.toString()
+	)
+	replacementList.push(replacement)
+}
+
+/**
+ * Verifies if a node is of Boolean Kind.
+ *
+ * @param {ts.Node} node The given node.
+ * @returns {boolean} True if node is of Boolean Kind, false otherwise.
+ */
+function isBooleanKind(node: ts.Node): boolean {
+	return booleanOperators.includes(node.kind)
+}
+
+/**
  * Replace lines in original file based on `replacement` and returns updated file.
  *
  * @param {string} originalFile Original file content.
@@ -438,21 +465,6 @@ function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowF
 	const arrowFunction = variableDeclaration?.getChildren().find(ts.isArrowFunction)
 
 	return arrowFunction
-}
-
-function generateBooleanVariant(node: ts.Node, replacementList: Replacement[]) {
-	const operatorText = !(booleanOperatorsToText[node.kind] === 'true')
-	const replacement: Replacement = Replacement.replace(
-		node.getStart(),
-		node.getEnd(),
-		node.getText(),
-		operatorText.toString()
-	)
-	replacementList.push(replacement)
-}
-
-function isBooleanKind(node: ts.Node) {
-	return booleanOperators.includes(node.kind)
 }
 
 /**
