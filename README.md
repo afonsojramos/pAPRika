@@ -47,6 +47,29 @@ describe('mySubstring Testing Suite', function () {
 })
 ```
 
+It also supports Property-Based Testing:
+
+```js
+const fc = require('fast-check')
+
+contains = (text, pattern) => text.indexOf(pattern) > 0
+
+describe('properties', () => {
+	it('should always contain itself {contains}', () => {
+		fc.assert(fc.property(fc.string(), (text) => contains(text, text)))
+	})
+	it('should always contain its substrings {contains}', () => {
+		fc.assert(
+			fc.property(fc.string(), fc.string(), fc.string(), (a, b, c) => {
+				return contains(a + b + c, b)
+			})
+		)
+	})
+})
+```
+
+For `TypeScript` support it is required to have `tsconfig.json` in the root folder.
+
 ## Structure
 
 ```
