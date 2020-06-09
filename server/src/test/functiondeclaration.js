@@ -1,13 +1,15 @@
-function mySubstring(str, i1, i2) {
+import { expect } from 'chai'
+
+function mySubstring(str, i1, i2) {   
 	return str.substring(i1, i2)
 }
 
 describe('mySubstring', function () {
 	it('#fix {mySubstring}', function () {
-		assert.equal(mySubstring('This is a string', 1, 2), 'hi')
+		expect(mySubstring('This is a string', 1, 2)).to.equal('hi')
 	})
 
 	it('#fix {mySubstring}', function () {
-		assert.equal(mySubstring('This is a string', 6, 8), 's a')
+		expect(mySubstring('This is a string', 6, 8)).to.equal('s a')
 	})
 })
