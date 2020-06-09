@@ -526,4 +526,17 @@ function syntaxKindToName(kind: ts.SyntaxKind): string {
 	return (<any>ts).SyntaxKind[kind]
 }
 
-export { generateVariations, getTestedFunctionName }
+export {
+	generateVariations,
+	getTestedFunctionName,
+	generateOperatorVariants,
+	generateSwitchVariants,
+	generateParenthesesVariants,
+	generateOffByOneVariants,
+	generateOffByOneIdentifierVariants,
+	generateBooleanVariant,
+	generateRemovePrefixVariant,
+	getFunctionDeclarationNode,
+	getSyntaxList,
+	getArrowFunctionNode
+}
