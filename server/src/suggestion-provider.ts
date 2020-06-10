@@ -135,31 +135,34 @@ export default class SuggestionProvider {
 			const updatedDiagnostics = currentDiagnostics.reduce(
 				(prevDiagnostics: Diagnostic[], diagnostic: Diagnostic) => {
 					const changeArray = this.getLines(change.text)
-					if (
-						change.range.end.line <= diagnostic.range.start.line &&
-						change.range.end.character <= diagnostic.range.start.character
-					) {
+					if (change.range.end.line <= diagnostic.range.start.line) {
 						if (change.text.length === 0) {
 							const deletedLinesNum = change.range.end.line - change.range.start.line
 							console.log(`Deleted ${deletedLinesNum} lines`)
 							diagnostic.range.start.line -= deletedLinesNum
 							diagnostic.range.end.line -= deletedLinesNum
-							if (
-								change.range.end.line === diagnostic.range.start.line &&
-								change.range.end.character > diagnostic.range.start.character
-							) {
-								console.log(`Removed Diagnostic`)
-								return prevDiagnostics
-							} else {
-								console.log('remover char')
+							if (change.range.end.line === diagnostic.range.start.line) {
+								if (change.range.end.character > diagnostic.range.start.character) {
+									console.log(`Removed Diagnostic`)
+									return prevDiagnostics
+								} else {
+									const charDiff = change.range.end.character - change.range.start.character
+									diagnostic.range.start.character -= charDiff
+									diagnostic.range.end.character -= charDiff
+									console.log('Removed Char')
+								}
 							}
 						} else {
 							console.log(`Changed ${diagnostic.range.start.line}`)
 							diagnostic.range.start.line += changeArray.length - 1
 							diagnostic.range.end.line += changeArray.length - 1
 							if (change.range.end.line === diagnostic.range.start.line) {
-								diagnostic.range.start.character += change.text.length
-								diagnostic.range.end.character += change.text.length
+								if (change.range.start.character === diagnostic.range.start.character)
+									return prevDiagnostics
+								else if (change.range.start.character < diagnostic.range.start.character) {
+									diagnostic.range.start.character += change.text.length
+									diagnostic.range.end.character += change.text.length
+								}
 							}
 						}
 					}

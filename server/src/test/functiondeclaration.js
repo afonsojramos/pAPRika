@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-function mySubstring(str, i1, i2) {   
+function mySubstring(str, i1, i2) {
 	return str.substring(i1, i2)
 }
 
