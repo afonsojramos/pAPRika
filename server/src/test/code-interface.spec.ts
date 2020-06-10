@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import 'mocha'
 import * as ts from 'typescript'
 
-const testPath: string = 'server/src/test/'
+const testPath: string = 'server/src/test/examples/'
 
 describe('Function Declarations', () => {
 	it('should return undefined to inexistent function', () => {
