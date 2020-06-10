@@ -1,27 +1,30 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
+name: 🐛 Bug Report
+labels: '🐛 Bug Report'
+about: Create a bug report to help 🌶 pAPRika improve
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## 🐛 Bug Report
 
-**To Reproduce**
-Steps to reproduce the behavior:
+Clear and concise description of the bug.
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## To Reproduce
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+Steps to reproduce:
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## Expected behavior
 
-**Additional context**
-Add any other context about the problem here.
+Clear and concise description of what you expected to happen.
+
+If you have one, please provide a minimal repository reproducing the issue on GitHub.
+
+## Your environment
+
+| Packages / Softwares | Version(s) |
+| -------------------- | ---------- |
+| pAPRika              |            |
+| node                 |            |
+| mocha                |            |
+| TypeScript\*         |            |
+
+\*Only for TypeScript's users
