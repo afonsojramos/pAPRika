@@ -74,58 +74,6 @@ const operators = [mathOperators, comparisonOperators, logicalOperators]
 
 const operatorsToText = [mathOperatorsToText, comparisonOperatorsToText, logicalOperatorsToText]
 
-// TODO: Find alternative to Test PASS and FAIL Decoration
-/* const passDecorationType = vscode.window.createTextEditorDecorationType({
-	after: {
-		contentText: ' // passed',
-		textDecoration: 'none; opacity: 0.35'
-	}
-});
-
-const failDecorationType = vscode.window.createTextEditorDecorationType({
-	after: {
-		contentText: ' // failed',
-		textDecoration: 'none; color: #DC143C; opacity: 0.35'
-	}
-});
-
-function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): void {
-	let documentText: string = editor.document.getText();
-	let documentLines: string[] = documentText.split('\n');
-	let testLines: number[] = [];
-	let testRegex = /it\((\'|\").*(\'|\")/;
-
-	for (let lineIndex = 0; lineIndex < documentLines.length; lineIndex++) {
-		let match = documentLines[lineIndex].match(testRegex);
-
-		if (match !== null && match.index !== undefined) {
-			testLines.push(lineIndex);
-		}
-	}
-
-	let passDecorationsArray: DecorationOptions[] = [];
-	let failDecorationsArray: DecorationOptions[] = [];
-    
-	for (let testIndex = 0; testIndex < testResults.length; testIndex++) {
-		let lineIndex: number = testLines[testIndex];
-		let line: string = documentLines[lineIndex];
-
-		let range = new Range(
-			new Position(lineIndex, line.length),
-			new Position(lineIndex, line.length)
-		);
-
-		if (testResults[testIndex].passed) {
-			passDecorationsArray.push({range});
-		} else {
-			failDecorationsArray.push({range});
-		}
-
-		editor.setDecorations(passDecorationType, passDecorationsArray);
-		editor.setDecorations(failDecorationType, failDecorationsArray);
-	}
-} */
-
 /**
  * Exported function to generate variations of a `functionName` within a file.
  *
@@ -536,11 +484,6 @@ function getSyntaxList(filePath: string): ts.Node {
 	return sourceFile.getChildAt(0)
 }
 
-function getTSNodeText(node: ts.Node): string {
-	const tempSourceFile: ts.SourceFile = ts.createSourceFile('temp.js', '', ts.ScriptTarget.Latest, true)
-	return ts.createPrinter().printNode(ts.EmitHint.Unspecified, node, tempSourceFile)
-}
-
 /**
  * Verifies if provided name in `comparable` is the same as
  * the provided `functionNode`'s name.
@@ -571,6 +514,12 @@ function isNodeName(
 	return false
 }
 
+/**
+ * Obtains TestIdentifier from a test code.
+ *
+ * @param {string} testCode The respective test code.
+ * @returns {TestIdentifier}
+ */
 function testIdentifierFromTestCode(testCode: string): TestIdentifier {
 	const splitTestCode: string[] = testCode.split('.')
 	const testIdentifier: TestIdentifier = {
@@ -580,10 +529,6 @@ function testIdentifierFromTestCode(testCode: string): TestIdentifier {
 	}
 
 	return testIdentifier
-}
-
-function syntaxKindToName(kind: ts.SyntaxKind): string {
-	return (<any>ts).SyntaxKind[kind]
 }
 
 export {
