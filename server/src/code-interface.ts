@@ -470,7 +470,7 @@ function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowF
 
 	const arrowFunctionDeclarations = variableStatements.find((variableStatement) =>
 		variableStatement.declarationList.declarations.find((functionNode) =>
-			isFunctionName(functionName, functionNode)
+			isNodeName(testIdentifier.functionName, functionNode)
 		)
 	)
 	const variableDeclarationList = arrowFunctionDeclarations?.getChildren().find(ts.isVariableDeclarationList)
@@ -505,15 +505,27 @@ function getTSNodeText(node: ts.Node): string {
 }
 
 /**
- * Verifies if provided function name in `comparable` is the same as
+ * Verifies if provided name in `comparable` is the same as
  * the provided `functionNode`'s name.
  *
  * @param {string} comparable Function name string.
- * @param {(ts.FunctionDeclaration | ts.VariableDeclaration)} functionNode Function node to both `FunctionDeclaration` and `VariableDeclaration` to allow for both function declarations and arrow functions.
- * @returns {boolean} Respective boolean for the verification.
+ * @param {(ts.FunctionDeclaration | ts.VariableDeclaration | ts.MethodDeclaration | ts.ClassDeclaration)} node
+ * Node to be compared.
+ * @returns {boolean}  Respective boolean for the verification.
  */
-function isFunctionName(comparable: string, functionNode: ts.FunctionDeclaration | ts.VariableDeclaration): boolean {
-	const identifier: ts.Identifier | ts.ObjectBindingPattern | ts.ArrayBindingPattern | undefined = functionNode.name
+function isNodeName(
+	comparable: string,
+	node: ts.FunctionDeclaration | ts.VariableDeclaration | ts.MethodDeclaration | ts.ClassDeclaration
+): boolean {
+	const identifier:
+		| ts.Identifier
+		| ts.ObjectBindingPattern
+		| ts.ArrayBindingPattern
+		| ts.StringLiteral
+		| ts.NumericLiteral
+		| ts.ComputedPropertyName
+		| ts.PrivateIdentifier
+		| undefined = node.name
 
 	if (identifier) {
 		return comparable === (identifier.getText() || ('text' in identifier ? identifier.text : ''))
