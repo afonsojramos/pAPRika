@@ -130,7 +130,7 @@ function decorate(editor: vscode.TextEditor, testResults: TestResultObject[]): v
  */
 async function generateVariations(
 	filePath: string,
-	functionName: string,
+	testCode: string,
 	document: TextDocument,
 	suggestionProvider: SugestionProvider
 ) {
@@ -426,21 +426,23 @@ function replaceLines(originalFile: string, replacement: Replacement): string {
 }
 
 /**
- * Extracts the function name from a Mocha test.
+ * Extracts the TestIdentifier if available from a Mocha test.
  *
- * @param {Mocha.Test} test The Mocha test.
- * @returns {(string | undefined)} The function's name.
+ * @param {Mocha.Test} test
+ * @returns {({ functionName: string; className: string } | undefined)}
  */
-function getTestedFunctionName(test: Mocha.Test): string | undefined {
+function getTestIdentifier(test: Mocha.Test): TestIdentifier | undefined {
 	const testTitle: string = test.title
 	const regex: RegExp = new RegExp(/(?<={).*(?=})/)
 	const results: RegExpExecArray | null = regex.exec(testTitle)
+	if (results === null) return undefined
 
-	if (results !== null && results.length >= 1) {
-		return results[0]
+	const splitResult = results[0].split('.')
+	return {
+		testCode: results[0],
+		className: splitResult.length > 1 ? splitResult[0] : '',
+		functionName: splitResult.length > 1 ? splitResult[1] : splitResult[0]
 	}
-
-	return undefined
 }
 
 /**
