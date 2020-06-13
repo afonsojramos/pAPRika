@@ -1,7 +1,7 @@
 import { unlinkSync } from 'fs'
 import * as Mocha from 'mocha'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { generateVariations, getTestedFunctionName } from './code-interface'
+import { generateVariations, getTestIdentifier } from './code-interface'
 import Replacement from './replacement'
 import SuggestionProvider from './suggestion-provider'
 

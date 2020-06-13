@@ -10,6 +10,12 @@ interface SyntaxKindToTextMap {
 	[key: number]: string
 }
 
+interface TestIdentifier {
+	testCode: string
+	functionName: string
+	className: string
+}
+
 const mathOperators: number[] = [
 	ts.SyntaxKind.SlashToken,
 	ts.SyntaxKind.AsteriskToken,
@@ -135,8 +141,11 @@ async function generateVariations(
 	suggestionProvider: SugestionProvider
 ) {
 	const originalFileContent: string = readFileSync(filePath).toString()
-	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | undefined =
-		getFunctionDeclarationNode(filePath, functionName) || getArrowFunctionNode(filePath, functionName)
+	const testIdentifier: TestIdentifier = testIdentifierFromTestCode(testCode)
+	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | ts.MethodDeclaration | undefined =
+		getFunctionDeclarationNode(filePath, testIdentifier) ||
+		getArrowFunctionNode(filePath, testIdentifier) ||
+		getMethodDeclarationNode(filePath, testIdentifier)
 
 	if (!functionNode) {
 		console.error('ERROR: Could not find a function with the name provided in the failing test')
@@ -149,10 +158,10 @@ async function generateVariations(
 
 	replacementList.map((replacement, index) => {
 		const variation: string = replaceLines(originalFileContent, replacement)
-		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}${index}.${extension}`
+		const variationFileName: string = `${dirname(filePath)}\\tmp${testIdentifier.functionName}${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
-		runTest(variationFileName, document, [replacement], functionName, suggestionProvider)
+		runTest(variationFileName, document, [replacement], testIdentifier.functionName, suggestionProvider)
 	})
 
 	replacementList = []
@@ -168,10 +177,12 @@ async function generateVariations(
 
 	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
 		const variation: string = switchExpressionsVariation
-		const variationFileName: string = `${dirname(filePath)}\\tmp${functionName}switch${index}.${extension}`
+		const variationFileName: string = `${dirname(filePath)}\\tmp${
+			testIdentifier.functionName
+		}switch${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
-		runTest(variationFileName, document, [replacementList[index]], functionName, suggestionProvider)
+		runTest(variationFileName, document, [replacementList[index]], testIdentifier.functionName, suggestionProvider)
 	})
 }
 
@@ -449,24 +460,48 @@ function getTestIdentifier(test: Mocha.Test): TestIdentifier | undefined {
  * Finds a Function Declaration Node with a specific name in a file.
  *
  * @param {string} filePath The corresponding file path.
- * @param {string} functionName The function's name to be found.
+ * @param {TestIdentifier} testIdentifier The test identifier with the name of the function to be found.
  * @returns {(ts.FunctionDeclaration | undefined)}The Function Declaration Node.
  */
-function getFunctionDeclarationNode(filePath: string, functionName: string): ts.FunctionDeclaration | undefined {
+function getFunctionDeclarationNode(
+	filePath: string,
+	testIdentifier: TestIdentifier
+): ts.FunctionDeclaration | undefined {
 	const syntaxList: ts.Node = getSyntaxList(filePath)
-	const functionDeclarations: ts.FunctionDeclaration[] = syntaxList.getChildren().filter(ts.isFunctionDeclaration)
 
-	return functionDeclarations.find((functionNode) => isFunctionName(functionName, functionNode))
+	return syntaxList
+		.getChildren()
+		.filter(ts.isFunctionDeclaration)
+		.find((functionNode) => isNodeName(testIdentifier.functionName, functionNode))
+}
+
+/**
+ * Finds a Method Declaration Node with a specific name in a file.
+ *
+ * @param {string} filePath The corresponding file path.
+ * @param {TestIdentifier} testIdentifier The test identifier with the name of the arrow function to be found.
+ * @returns {(ts.MethodDeclaration | undefined)} The Method Declaration Node.
+ */
+function getMethodDeclarationNode(filePath: string, testIdentifier: TestIdentifier): ts.MethodDeclaration | undefined {
+	const syntaxList: ts.Node = getSyntaxList(filePath)
+	const classDeclaration = syntaxList
+		.getChildren()
+		.filter(ts.isClassDeclaration)
+		.find((classDeclaration) => isNodeName(testIdentifier.className, classDeclaration))
+
+	return classDeclaration!.members
+		.filter(ts.isMethodDeclaration)
+		.find((methodNode) => isNodeName(testIdentifier.functionName, methodNode))
 }
 
 /**
  * Finds an Arrow Function Node with a specific name in a file.
  *
  * @param {string} filePath The corresponding file path.
- * @param {string} functionName The function's name to be found.
+ * @param {TestIdentifier} testIdentifier The test identifier with the name of the arrow function to be found.
  * @returns {(ts.ArrowFunction | undefined)} The Arrow Function Node.
  */
-function getArrowFunctionNode(filePath: string, functionName: string): ts.ArrowFunction | undefined {
+function getArrowFunctionNode(filePath: string, testIdentifier: TestIdentifier): ts.ArrowFunction | undefined {
 	const syntaxList: ts.Node = getSyntaxList(filePath)
 	const variableStatements: ts.VariableStatement[] = syntaxList.getChildren().filter(ts.isVariableStatement)
 
