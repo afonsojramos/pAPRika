@@ -46,12 +46,12 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 				passed: false
 			})
 
-			const testedFunctionName: string | undefined = getTestedFunctionName(test)
+			const testCode = getTestIdentifier(test)?.testCode
 
-			if (testedFunctionName !== undefined && failingTests.hasOwnProperty(testedFunctionName)) {
-				failingTests[testedFunctionName].push(test)
-			} else if (testedFunctionName !== undefined) {
-				failingTests[testedFunctionName] = [test]
+			if (testCode !== undefined && failingTests.hasOwnProperty(testCode)) {
+				failingTests[testCode].push(test)
+			} else if (testCode !== undefined) {
+				failingTests[testCode] = [test]
 			}
 		})
 
@@ -68,9 +68,9 @@ function runTestSuite(testSuitePath: string, document: TextDocument, suggestionP
 
 		runner.on('end', async () => {
 			suggestionProvider.updateProgressFromStep(Object.keys(failingTests).length)
-			Object.keys(failingTests).forEach(async (testedFunctionName) => {
-				if (testedFunctionName !== undefined) {
-					await generateVariations(testSuitePath, testedFunctionName, document, suggestionProvider)
+			Object.keys(failingTests).forEach(async (testCode) => {
+				if (testCode !== undefined) {
+					await generateVariations(testSuitePath, testCode, document, suggestionProvider)
 					suggestionProvider.updateProgressFromStep()
 				}
 			})

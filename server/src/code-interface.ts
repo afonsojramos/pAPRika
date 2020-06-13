@@ -534,13 +534,24 @@ function isNodeName(
 	return false
 }
 
+function testIdentifierFromTestCode(testCode: string): TestIdentifier {
+	const splitTestCode: string[] = testCode.split('.')
+	const testIdentifier: TestIdentifier = {
+		testCode: testCode,
+		functionName: splitTestCode.length > 1 ? splitTestCode[1] : splitTestCode[0],
+		className: splitTestCode.length > 1 ? splitTestCode[0] : ''
+	}
+
+	return testIdentifier
+}
+
 function syntaxKindToName(kind: ts.SyntaxKind): string {
 	return (<any>ts).SyntaxKind[kind]
 }
 
 export {
 	generateVariations,
-	getTestedFunctionName,
+	getTestIdentifier,
 	generateOperatorVariants,
 	generateSwitchVariants,
 	generateParenthesesVariants,
@@ -550,5 +561,6 @@ export {
 	generateRemovePrefixVariant,
 	getFunctionDeclarationNode,
 	getSyntaxList,
-	getArrowFunctionNode
+	getArrowFunctionNode,
+	TestIdentifier
 }
