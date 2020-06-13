@@ -12,7 +12,8 @@ export default class Replacement {
 		readonly start: number,
 		readonly end: number,
 		readonly oldText: string = '',
-		readonly newText: string = ''
+		readonly newText: string = '',
+		readonly code: string = ''
 	) {}
 
 	/**
@@ -33,7 +34,7 @@ export default class Replacement {
 	 * @param {string} oldText Old text to replace.
 	 * @param {string} newText New text.
 	 */
-	public static replace(start: number, end: number, oldText: string, newText: string) {
-		return new Replacement(start, end, oldText, newText)
+	public static replace(start: number, end: number, oldText: string, newText: string, code: string) {
+		return new Replacement(start, end, oldText, newText, code)
 	}
 }
