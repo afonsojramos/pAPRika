@@ -198,7 +198,13 @@ function switchExpressions(fileText: string, functionText: string, replacementLi
 		const endPos: number = startPos + functionLines[i].length + functionLines[i + 1].length + 1
 		const oldText: string = [functionLines[i], functionLines[i + 1]].join('\n')
 		const newText: string = [variationLines[i], variationLines[i + 1]].join('\n')
-		const replacement: Replacement = Replacement.replace(startPos, endPos, oldText, newText)
+		const replacement: Replacement = Replacement.replace(
+			startPos,
+			endPos,
+			oldText,
+			newText,
+			`switch${replacementList.length + 1}`
+		)
 
 		replacementList.push(replacement)
 	}
@@ -225,7 +231,8 @@ function generateOperatorVariants(node: ts.Node, replacementList: Replacement[])
 						operator.getStart(),
 						operator.getEnd(),
 						operator.getText(),
-						operatorText
+						operatorText,
+						`${replacementList.length + 1}`
 					)
 					replacementList.push(replacement)
 				})
@@ -246,13 +253,15 @@ function generateOffByOneVariants(node: ts.Node, replacementList: Replacement[])
 		rhsNode.getStart(),
 		rhsNode.getEnd(),
 		rhsNodeText,
-		`(${rhsNodeText} + 1)`
+		`(${rhsNodeText} + 1)`,
+		`${replacementList.length + 1}`
 	)
 	const replacementMinusOne: Replacement = Replacement.replace(
 		rhsNode.getStart(),
 		rhsNode.getEnd(),
 		rhsNodeText,
-		`(${rhsNodeText} - 1)`
+		`(${rhsNodeText} - 1)`,
+		`${replacementList.length + 1}`
 	)
 	replacementList.push(replacementPlusOne)
 	replacementList.push(replacementMinusOne)
@@ -270,13 +279,15 @@ function generateOffByOneIdentifierVariants(node: ts.Node, replacementList: Repl
 		node.getStart(),
 		node.getEnd(),
 		nodeText,
-		`(${nodeText} + 1)`
+		`(${nodeText} + 1)`,
+		`${replacementList.length + 1}`
 	)
 	const replacementMinusOne: Replacement = Replacement.replace(
 		node.getStart(),
 		node.getEnd(),
 		nodeText,
-		`(${nodeText} - 1)`
+		`(${nodeText} - 1)`,
+		`${replacementList.length + 1}`
 	)
 	replacementList.push(replacementPlusOne)
 	replacementList.push(replacementMinusOne)
@@ -300,7 +311,8 @@ function generateSwitchVariants(node: ts.Node, replacementList: Replacement[]) {
 		lhsNode.getStart(),
 		rhsNode.getEnd(),
 		node.getFullText(),
-		newText
+		newText,
+		`${replacementList.length + 1}`
 	)
 	replacementList.push(replacement)
 }
@@ -320,13 +332,15 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
 		lhsNode.getStart(),
 		lhsNode.getEnd(),
 		lhsNodeText,
-		`(${lhsNodeText})`
+		`(${lhsNodeText})`,
+		`${replacementList.length + 1}`
 	)
 	const replacementRightPar: Replacement = Replacement.replace(
 		rhsNode.getStart(),
 		rhsNode.getEnd(),
 		rhsNodeText,
-		`(${rhsNodeText})`
+		`(${rhsNodeText})`,
+		`${replacementList.length + 1}`
 	)
 	replacementList.push(replacementLeftPar)
 	replacementList.push(replacementRightPar)
@@ -340,7 +354,13 @@ function generateParenthesesVariants(node: ts.Node, replacementList: Replacement
  */
 function generateRemovePrefixVariant(node: ts.Node, replacementList: Replacement[]) {
 	const prefix: ts.Node = node.getChildAt(0)
-	const replacement: Replacement = Replacement.replace(prefix.getStart(), prefix.getEnd(), prefix.getText(), '')
+	const replacement: Replacement = Replacement.replace(
+		prefix.getStart(),
+		prefix.getEnd(),
+		prefix.getText(),
+		'',
+		`${replacementList.length + 1}`
+	)
 	replacementList.push(replacement)
 }
 
@@ -356,7 +376,8 @@ function generateBooleanVariant(node: ts.Node, replacementList: Replacement[]) {
 		node.getStart(),
 		node.getEnd(),
 		node.getText(),
-		operatorText.toString()
+		operatorText.toString(),
+		`${replacementList.length + 1}`
 	)
 	replacementList.push(replacement)
 }
