@@ -135,7 +135,7 @@ export default class SuggestionProvider {
 			const updatedDiagnostics = currentDiagnostics.reduce(
 				(prevDiagnostics: Diagnostic[], diagnostic: Diagnostic) => {
 					const changeArray = this.getLines(change.text)
-					if (change.range.end.line <= diagnostic.range.start.line) {
+					if (change.range.start.line <= diagnostic.range.end.line) {
 						if (change.text.length === 0) {
 							const deletedLinesNum = change.range.end.line - change.range.start.line
 							console.log(`Deleted ${deletedLinesNum} lines`)
