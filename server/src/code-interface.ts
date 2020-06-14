@@ -90,7 +90,7 @@ async function generateVariations(
 ) {
 	const originalFileContent: string = readFileSync(filePath).toString()
 	const testIdentifier: TestIdentifier = testIdentifierFromTestCode(testCode)
-	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | ts.MethodDeclaration | undefined =
+	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | ts.MethodDeclaration | ts.Expression | undefined =
 		getFunctionDeclarationNode(filePath, testIdentifier) ||
 		getArrowFunctionNode(filePath, testIdentifier) ||
 		getMethodDeclarationNode(filePath, testIdentifier)
@@ -451,16 +451,25 @@ function getFunctionDeclarationNode(
  * @param {TestIdentifier} testIdentifier The test identifier with the name of the arrow function to be found.
  * @returns {(ts.MethodDeclaration | undefined)} The Method Declaration Node.
  */
-function getMethodDeclarationNode(filePath: string, testIdentifier: TestIdentifier): ts.MethodDeclaration | undefined {
+function getMethodDeclarationNode(
+	filePath: string,
+	testIdentifier: TestIdentifier
+): ts.MethodDeclaration | ts.Expression | undefined {
 	const syntaxList: ts.Node = getSyntaxList(filePath)
 	const classDeclaration = syntaxList
 		.getChildren()
 		.filter(ts.isClassDeclaration)
 		.find((classDeclaration) => isNodeName(testIdentifier.className, classDeclaration))
 
-	return classDeclaration!.members
+	const methodDeclaration = classDeclaration?.members
 		.filter(ts.isMethodDeclaration)
 		.find((methodNode) => isNodeName(testIdentifier.functionName, methodNode))
+
+	const arrowFunction = classDeclaration?.members
+		.filter(ts.isPropertyDeclaration)
+		.find((methodNode) => isNodeName(testIdentifier.functionName, methodNode))
+
+	return methodDeclaration || arrowFunction?.initializer
 }
 
 /**
@@ -516,7 +525,7 @@ function getSyntaxList(filePath: string): ts.Node {
  */
 function isNodeName(
 	comparable: string,
-	node: ts.FunctionDeclaration | ts.VariableDeclaration | ts.MethodDeclaration | ts.ClassDeclaration
+	node: ts.FunctionDeclaration | ts.VariableDeclaration | ts.MethodDeclaration | ts.ClassDeclaration | ts.ClassElement
 ): boolean {
 	const identifier:
 		| ts.Identifier
