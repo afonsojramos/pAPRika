@@ -91,7 +91,16 @@ export default class SuggestionProvider {
 					start: textDocument.positionAt(replacement.start),
 					end: textDocument.positionAt(replacement.end)
 				},
-				message: `Replace: ${replacement.oldText} with ${replacement.newText}`,
+				message: `Replace: \"${replacement.oldText
+					.replace(/\n/, '\\n')
+					.replace(/\t/g, ' ')
+					.replace(/\s/g, ' ')
+					.trim()}\" with \"${replacement.newText
+					.replace(/\n/, '\\n')
+					.replace(/\t/g, ' ')
+					.replace(/\s/g, ' ')
+					.trim()}\"`.replace(/ +/g, ' '),
+				code: replacement.code,
 				source: 'pAPRika'
 			}
 			diagnostics.push(diagnostic)
