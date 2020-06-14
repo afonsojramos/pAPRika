@@ -16,6 +16,7 @@ const INITIAL_PROGRESS_PERCENTAGE = 25
 export default class SuggestionProvider {
 	private connection: Connection
 	private diagnosticsDocs: Map<String, Diagnostic[]> = new Map<String, Diagnostic[]>()
+	private replacementsDocs: Map<String, Map<String, Replacement>> = new Map<String, Map<String, Replacement>>()
 	private currentProgress: number = 0
 	private progressStep: number = 0
 	private paprikaProgress: WorkDoneProgress | undefined
@@ -104,6 +105,7 @@ export default class SuggestionProvider {
 				source: 'pAPRika'
 			}
 			diagnostics.push(diagnostic)
+			this.updateReplacements(textDocument.uri, replacement)
 		})
 
 		const existingDiagnostics = this.diagnosticsDocs.get(textDocument.uri) || []
@@ -129,6 +131,19 @@ export default class SuggestionProvider {
 		)
 		this.diagnosticsDocs.set(textDocumentUri, diagnostics)
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: diagnostics })
+	}
+
+	/**
+	 * Adds a replacement to the map of a given TextDocument.
+	 *
+	 * @param {string} textDocumentUri
+	 * @param {Replacement} replacement
+	 * @memberof SuggestionProvider
+	 */
+	updateReplacements(textDocumentUri: string, replacement: Replacement) {
+		const codeToReplacement = new Map<String, Replacement>()
+		codeToReplacement.set(replacement.code, replacement)
+		this.replacementsDocs.set(textDocumentUri, codeToReplacement)
 	}
 
 	/**
@@ -207,6 +222,7 @@ export default class SuggestionProvider {
 		console.info(`Reset diagnostics for ${textDocumentUri.replace(/^.*[\\\/]/, '')}`)
 		this.connection.sendDiagnostics({ uri: textDocumentUri, diagnostics: [] })
 		this.diagnosticsDocs.set(textDocumentUri, [])
+		this.replacementsDocs.set(textDocumentUri, new Map<String, Replacement>())
 	}
 
 	/**
@@ -228,12 +244,13 @@ export default class SuggestionProvider {
 				return
 			}
 
-			const replaceRegex: RegExp = /.*Replace:.*with(.*)/g
-			const parsedText = diagnostic.message.replace(/\s/g, '')
-			const replaceRegexMatch: RegExpExecArray | null = replaceRegex.exec(parsedText)
+			const documentReplacements = this.replacementsDocs.get(textDocumentUri)
+			const replacement =
+				documentReplacements && diagnostic.code
+					? documentReplacements.get(diagnostic.code.toString())
+					: undefined
 
-			replaceRegexMatch &&
-				replaceRegexMatch[1] &&
+			replacement &&
 				codeActions.push({
 					title: diagnostic.message,
 					kind: CodeActionKind.QuickFix,
@@ -243,7 +260,7 @@ export default class SuggestionProvider {
 							[textDocumentUri]: [
 								{
 									range: diagnostic.range,
-									newText: replaceRegexMatch[1]
+									newText: replacement.newText
 								}
 							]
 						}
