@@ -141,9 +141,15 @@ export default class SuggestionProvider {
 	 * @memberof SuggestionProvider
 	 */
 	updateReplacements(textDocumentUri: string, replacement: Replacement) {
-		const codeToReplacement = new Map<String, Replacement>()
-		codeToReplacement.set(replacement.code, replacement)
-		this.replacementsDocs.set(textDocumentUri, codeToReplacement)
+		const savedReplacements = this.replacementsDocs.get(textDocumentUri)
+		if (savedReplacements) {
+			savedReplacements.set(replacement.code, replacement)
+			this.replacementsDocs.set(textDocumentUri, savedReplacements)
+		} else {
+			const codeToReplacement = new Map<String, Replacement>()
+			codeToReplacement.set(replacement.code, replacement)
+			this.replacementsDocs.set(textDocumentUri, codeToReplacement)
+		}
 	}
 
 	/**
