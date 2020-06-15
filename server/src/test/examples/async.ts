@@ -43,7 +43,7 @@ class AsyncSemaphore {
 	}
 }
 
-describe.only('the failing test', () => {
+describe('the failing tests', () => {
 	it('test #1 {AsyncSemaphore.wait}', async () => {
 		await assert(
 			asyncProperty(
@@ -54,14 +54,27 @@ describe.only('the failing test', () => {
 				),
 				async (size, ops) => testSemaphore(size, ops)
 			),
-			{ numRuns: 3 }
+			{ numRuns: 5 }
 		)
-	}).timeout(30000)
+	})
 
-	it('test 2 {AsyncQueue.s}', () => {
+	/* it('test #2 {AsyncSemaphore.wait}', async () => {
+		await assert(
+			asyncProperty(
+				anArray(
+					aBoolean().map((b) => (b ? 'E' : 'D')),
+					1000
+				),
+				async (ns) => testAsyncQueueBehavior(ns)
+			),
+			{ numRuns: 100 }
+		)
+	})
+
+	it('test #1 {AsyncQueue.s}', () => {
 		const q = new AsyncQueue<number>()
 		expect(q.s('This is a string')).to.equal('si')
-	})
+	}) */
 })
 
 async function testSemaphore(size: number, ops: Array<'S' | 'W'>) {
