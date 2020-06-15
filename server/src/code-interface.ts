@@ -90,7 +90,12 @@ async function generateVariations(
 ) {
 	const originalFileContent: string = readFileSync(filePath).toString()
 	const testIdentifier: TestIdentifier = testIdentifierFromTestCode(testCode)
-	const functionNode: ts.FunctionDeclaration | ts.ArrowFunction | ts.MethodDeclaration | ts.Expression | undefined =
+	const functionNode:
+		| ts.FunctionDeclaration
+		| ts.ArrowFunction
+		| ts.MethodDeclaration
+		| ts.PropertyDeclaration
+		| undefined =
 		getFunctionDeclarationNode(filePath, testIdentifier) ||
 		getArrowFunctionNode(filePath, testIdentifier) ||
 		getMethodDeclarationNode(filePath, testIdentifier)
@@ -102,11 +107,11 @@ async function generateVariations(
 
 	let replacementList: Replacement[] = new Array()
 	const extension: string = /(?:\.([^.]+))?$/.exec(filePath)![1]
-	visitDoReplacements(functionNode!, replacementList)
+	visitDoReplacements(functionNode, replacementList)
 
 	replacementList.map((replacement, index) => {
 		const variation: string = replaceLines(originalFileContent, replacement)
-		const variationFileName: string = `${dirname(filePath)}\\tmp${testIdentifier.functionName}${index}.${extension}`
+		const variationFileName: string = `${dirname(filePath)}\\tmp${testIdentifier.testCode}${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
 		runTest(variationFileName, document, [replacement], testIdentifier.functionName, suggestionProvider)
@@ -114,9 +119,7 @@ async function generateVariations(
 
 	replacementList = []
 
-	const originalFunction: string = ts.isFunctionDeclaration(functionNode)
-		? functionNode!.getText()
-		: functionNode!.parent.getText()
+	const originalFunction: string = functionNode.getText()
 	const switchExpressionsVariations: string[] = switchExpressions(
 		originalFileContent,
 		originalFunction,
@@ -126,7 +129,7 @@ async function generateVariations(
 	switchExpressionsVariations.map((switchExpressionsVariation, index) => {
 		const variation: string = switchExpressionsVariation
 		const variationFileName: string = `${dirname(filePath)}\\tmp${
-			testIdentifier.functionName
+			testIdentifier.testCode
 		}switch${index}.${extension}`
 		writeFileSync(variationFileName, variation)
 
@@ -454,7 +457,7 @@ function getFunctionDeclarationNode(
 function getMethodDeclarationNode(
 	filePath: string,
 	testIdentifier: TestIdentifier
-): ts.MethodDeclaration | ts.Expression | undefined {
+): ts.MethodDeclaration | ts.PropertyDeclaration | undefined {
 	const syntaxList: ts.Node = getSyntaxList(filePath)
 	const classDeclaration = syntaxList
 		.getChildren()
@@ -469,7 +472,7 @@ function getMethodDeclarationNode(
 		.filter(ts.isPropertyDeclaration)
 		.find((methodNode) => isNodeName(testIdentifier.functionName, methodNode))
 
-	return methodDeclaration || arrowFunction?.initializer
+	return methodDeclaration || arrowFunction
 }
 
 /**
