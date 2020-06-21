@@ -27,11 +27,6 @@ let suggestionProvider = new SuggestionProvider(connection)
 // supports full document sync only
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument)
 
-// Make the text document manager listen on the connection
-// for open, change and close text document events
-// This call has to be called here or some connection handlers won't work
-documents.listen(connection)
-
 let hasConfigurationCapability: boolean = false
 let hasWorkspaceFolderCapability: boolean = false
 let hasDiagnosticRelatedInformationCapability: boolean = false
@@ -135,12 +130,8 @@ connection.onCodeAction((codeActionParams: CodeActionParams) => {
 	return codeActions
 })
 
-connection.onDidChangeTextDocument((params) => {
-	console.info(`${params.textDocument.uri} changed`)
-
-	params.contentChanges.forEach((change: TextDocumentContentChangeEvent) => {
-		suggestionProvider.updateRangeOnChange(params.textDocument.uri, change)
-	})
+documents.onDidChangeContent((params) => {
+	suggestionProvider.resetDiagnostics(params.document.uri)
 })
 
 connection.onExecuteCommand(async (handler) => {
@@ -162,6 +153,11 @@ function runPAPRika(document: TextDocument) {
 	console.info(`Running pAPRika on: ${testSuitePath}`)
 	testSuitePath !== undefined && runTestSuite(testSuitePath, document, suggestionProvider)
 }
+
+// Make the text document manager listen on the connection
+// for open, change and close text document events
+// This call has to be called here or some connection handlers won't work
+documents.listen(connection)
 
 // Listen on the connection
 connection.listen()
