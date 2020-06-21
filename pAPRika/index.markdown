@@ -16,7 +16,7 @@ layout: single # splash
 - Live (real-time) code suggestions
 - Myriad of fault detection mechanisms
 
-![pAPRika v0.0.1](/assets/pAPRika-v0.1.gif)
+![pAPRika v0.2](/assets/pAPRika-v0.2.gif)
 
 Download [pAPRika tests](/assets/paprika-tests.zip)!
 
