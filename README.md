@@ -24,7 +24,9 @@
 
 A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
 
-![pAPRika v0.0.2](pAPRika/assets/pAPRika-v0.2.gif)
+![pAPRika v0.2.0](pAPRika/assets/pAPRika-v0.2.gif)
+
+![pAPRika v0.2.1](pAPRika/assets/pAPRika-v0.2.1.gif)
 
 ## Usage
 
@@ -71,31 +73,14 @@ describe('properties', () => {
 
 For `TypeScript` support it is required to have `tsconfig.json` in the root folder.
 
-## Structure
+There is a command available for running pAPRika in all open files.
 
-```
-.
-├── client // Language Client
-│   ├── src
-│   │   ├── test // End to End tests for Language Client / Server
-│   │   └── extension.ts // Language Client entry point
-├── package.json // The extension manifest.
-└── server // Language Server
-    └── src
-        └── server.ts // Language Server entry point
-```
-
-<!-- ## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
+## Extension Settings
 
 This extension contributes the following settings:
 
--   `myExtension.enable`: enable/disable this extension
--   `myExtension.thing`: set to `blah` to do something
- -->
+-   `pAPRika.runOnOpen`: enable/disable running this extension when opening new files.
+-   `pAPRika.runOnSave`: enable/disable running this extension when saving new files.
 
 ## Development
 
@@ -106,5 +91,19 @@ This extension contributes the following settings:
 -   Select `Launch Client` from the drop-down.
 -   Run the launch config.
 -   If you want to debug the server as well use the launch configuration `Attach to Server`
+
+### Structure
+
+```
+.
+├── client // Language Client.
+│   ├── src
+│   │   └── extension.ts // Language Client entry point.
+├── examples // Examples of problems fixable with pAPRika.
+├── pAPRika // pAPRika website.
+└── server // Language Server.
+    └── src
+        └── server.ts // Language Server entry point.
+```
 
 **_Enjoy!_**

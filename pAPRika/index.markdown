@@ -15,6 +15,8 @@ A prototype extension to *Visual Studio Code*, repairing *JavaScript* and *TypeS
 
 ![pAPRika v0.2](/assets/pAPRika-v0.2.gif)
 
+![pAPRika v0.2.1](/assets/pAPRika-v0.2.1.gif)
+
 Download [pAPRika tests](/assets/paprika-tests.zip)!
 
 This extension and its source code will be made available afterwards to ensure the peer review process is double-blind.
