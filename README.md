@@ -28,7 +28,7 @@ A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeS
 
 ## Usage
 
-On each Test Function of Mocha (`it`) leave an identifier to the function that test is fixing `{mySubstring}`.
+On each Test Function of Mocha (`it`) leave an identifier to the function that is attempting to fix, like so: `{mySubstring}`.
 
 Example in JS:
 
