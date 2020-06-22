@@ -37,13 +37,8 @@ jobs:
     docker:
       - image: circleci/node:lts
     steps:
-      - run:
-          command: ls
       - attach_workspace:
           at: ~/pAPRika
-      - run:
-          command: ls
-          working_directory: ~/pAPRika/pAPRika
       - run:
           name: NPM install
           command: npm install
