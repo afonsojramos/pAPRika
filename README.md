@@ -22,12 +22,9 @@
   <img src='https://bettercodehub.com/edge/badge/afonsojramos/pAPRika?branch=master&token=9dc668864992fc676ce1d34c63c045705f7c90e0'>
 </p>
 
-## Features
+A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
 
--   Live code suggestions
--   Myriad of fault detection
-
-![pAPRika v0.0.1](pAPRika/assets/pAPRika-v0.1.gif)
+![pAPRika v0.0.2](pAPRika/assets/pAPRika-v0.2.gif)
 
 ## Usage
 
