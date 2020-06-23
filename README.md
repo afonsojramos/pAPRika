@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="pAPRika\assets\pAPRika.png" alt="Webwire logo" width="72" height="72">
+  <img src="pAPRika/assets/pAPRika.png" alt="pAPRika logo" width="72" height="72">
 </p>
 <h1 align="center">
   <b>p<span style="color:#c10301">APR</span>ika</b>
@@ -23,10 +23,10 @@
 </p>
 
 A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
-
-![pAPRika v0.2.0](pAPRika/assets/pAPRika-v0.2.gif)
-
-![pAPRika v0.2.1](pAPRika/assets/pAPRika-v0.2.1.gif)
+<p align="center">
+  <img src="pAPRika/assets/pAPRika-v0.2.1.gif">
+  <img src="pAPRika/assets/pAPRika-v0.2.gif">
+</p>
 
 ## Usage
 
