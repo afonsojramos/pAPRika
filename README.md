@@ -23,6 +23,7 @@
 </p>
 
 A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
+
 <p align="center">
   <img src="pAPRika/assets/pAPRika-v0.2.1.gif">
   <img src="pAPRika/assets/pAPRika-v0.2.gif">
@@ -33,6 +34,8 @@ A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeS
 On each Test Function of Mocha (`it`) leave an identifier to the function that is attempting to fix, like so: `{mySubstring}`.
 
 Example in JS:
+
+_`i2` will show up as an error and suggest to be replaced with `(i2 + 1)`_
 
 ```js
 function mySubstring(str, i1, i2) {
@@ -51,6 +54,8 @@ describe('mySubstring Testing Suite', function () {
 ```
 
 It also supports Property-Based Testing:
+
+_`>` will show up as an error and suggest to be replaced with `>=`_
 
 ```js
 const fc = require('fast-check')
