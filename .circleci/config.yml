@@ -22,7 +22,7 @@ jobs:
           working_directory: ~/pAPRika/pAPRika
       - run:
           name: Bundle Build
-          command: bundle exec jekyll build --verbose
+          command: JEKYLL_ENV=production bundle exec jekyll build --verbose
           working_directory: ~/pAPRika/pAPRika
       - run:
           name: HTMLProofer tests
