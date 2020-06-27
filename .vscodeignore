@@ -17,5 +17,6 @@ test/**
 .github/**
 scripts/**
 pAPRika/**
+examples/**
 !pAPRika/assets/pAPRika.png
 !pAPRika/assets/pAPRika-v0.1.gif
