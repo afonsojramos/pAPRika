@@ -1,0 +1,15 @@
+{
+  "name": "sample-project",
+  "version": "1.0.0",
+  "description": "Sample Project",
+  "main": "./src/index.js",
+  "mocha": {
+    "mochaExplorer.files": "part1/*.js",
+    "mochaExplorer.require": "ts-node/register"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^6.0.0"
+  }
+}
