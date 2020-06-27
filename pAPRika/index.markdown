@@ -22,10 +22,10 @@ layout: single # splash
 A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
 
 <p align="center">
-  <img src="/assets/pAPRika-v0.2.1.gif">
+  <img alt="pAPRika Showcase" src="/assets/pAPRika-v0.2.1.gif">
   <br>
   <br>
-  <img src="/assets/pAPRika-v0.2.gif">
+  <img alt="pAPRika Step by Step" src="/assets/pAPRika-v0.2.gif">
 </p>
 
 Download [pAPRika tests](/assets/paprika-tests.zip)!
