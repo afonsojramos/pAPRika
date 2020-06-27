@@ -1,5 +1,81 @@
 # Change Log
 
+## [0.3.0] - 2020-06-05
+
+### Fixed
+
+-   Buggy space that appeared in some suggestions.
+-   Error handling.
+-   Replacement storing to deprecate the parsing of Diagnostic messages.
+-   Replacements not being updated properly.
+-   Broken Document conversion of Offset to Position.
+
+### Changed
+
+-   Improved possible mutations.
+-   Removed unsupported capabilities.
+-   Refactoring of generateOperatorVariants().
+-   Refactoring to create getSyntaxList()
+-   Cleared Diagnostics on Change.
+-   Adapted Replacement to the use of test codes.
+-   Improved readability on Diagnostic messages.
+-   Minor improvements to the repository.
+-   Removed independent versioning of client and server.
+
+### Added
+
+-   Support for Arrow Function variations.
+-   Missing documentation.
+-   Logical operators mutation.
+-   BetterCodeHub & CircleCI badge.
+-   Prettier to the whole repository to enforce uniformity.
+-   Examples of usage.
+-   Boolean operators mutation.
+-   Prefix removal variation.
+-   Started unit testing.
+-   GitHub templates.
+-   Support for Classes variations.
+
+## [0.2.0] - 2020-06-05
+
+### Fixed
+
+-   Crash when certain Nodes did not have a certain property.
+-   Deployment running only on master.
+-   Capture of function content on ArrowFunctions.
+
+### Changed
+
+-   Updated dependencies.
+-   Changed Mocha reporter.
+-   Updated usage to improve ease of use.
+-   Replaced "==>" with "with".
+
+### Added
+
+-   TypeScript support.
+-   Usage information in ReadMe.
+-   Notification for passed tests.
+-   Mutation support for Arrow Functions.
+
+## [0.1.3] - 2020-06-02
+
+### Fixed
+
+-   Misplaced documents listener call.
+
+### Changed
+
+-   Asynchronous suggestion provider.
+-   Overall code improvements.
+-   Updated prettier rules for uniformity.
+
+### Added
+
+-   Progress reporting support.
+-   Created checks for diagnostic capability.
+-   Attempts at updating range on change.
+
 ## [0.1.2] - 2020-05-23
 
 ### Fixed
