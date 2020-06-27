@@ -85,7 +85,7 @@ describe('Longest Common Substring', () => {
 	})
 })
 
-/* describe('Properties of Longest Common Substring', () => {
+describe('Properties of Longest Common Substring', () => {
 	it('should find the same substring lengths whatever the order of the inputs {longestCommonSubstring}', () =>
 		fc.assert(
 			fc.property(fc.string(), fc.string(), (s1, s2) => {
@@ -108,4 +108,4 @@ describe('Longest Common Substring', () => {
 				assert.equal(longestCommonSubstring(prefix + s + suffix, s), s)
 			})
 		))
-}) */
+})
