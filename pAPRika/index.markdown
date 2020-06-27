@@ -9,7 +9,7 @@ layout: single # splash
 
 **p<span style="color:#c10301">APR</span>ika** is an Automatic Program Repair tool that attempts to fix small faults in your code.
 
-A prototype extension to *Visual Studio Code*, repairing *JavaScript* and *TypeScript* code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
+A prototype extension to _Visual Studio Code_, repairing _JavaScript_ and _TypeScript_ code and offering suggestions to the developers in real-time, using a mutation-based approach to Automated Program Repair in order to generate patches.
 
 <!-- List with gifs for each feature example: https://github.com/James-Yu/LaTeX-Workshop -->
 

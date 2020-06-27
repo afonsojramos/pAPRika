@@ -20,6 +20,10 @@
 			"options": { "parser": "markdown" }
 		},
 		{
+			"files": "*.markdown",
+			"options": { "parser": "markdown" }
+		},
+		{
 			"files": "*.yml",
 			"options": {
 				"parser": "yaml",
