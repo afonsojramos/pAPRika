@@ -1,4 +1,4 @@
-import * as fc from 'fast-check'
+var fc = require('fast-check')
 
 const contains = (text, pattern) => text.indexOf(pattern) > 0
 
