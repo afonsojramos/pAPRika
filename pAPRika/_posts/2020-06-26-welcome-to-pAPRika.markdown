@@ -55,7 +55,10 @@ describe('properties', () => {
 
 For `TypeScript` support it is required to have `tsconfig.json` in the root folder.
 
-There is a command available for running pAPRika in all open files.
+There are four options for running `pAPRika`, by saving the file, by opening a file, or by running either of the available commands:
+
+1.  `pAPRika: Spice this file` - This command runs pAPRika on the current file.
+2.  `pAPRika: Spice all open files` - This command runs pAPRika on all opened files, as such, it may become resource intensive.
 
 ## Extension Settings
 

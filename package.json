@@ -11,19 +11,12 @@
 	},
 	"publisher": "afonsojramos",
 	"icon": "pAPRika/assets/pAPRika.png",
-	"categories": [
-		"Other"
-	],
-	"keywords": [
-		"multi-root ready"
-	],
+	"categories": ["Other"],
+	"keywords": ["multi-root ready"],
 	"engines": {
 		"vscode": "^1.43.0"
 	},
-	"activationEvents": [
-		"onLanguage:javascript",
-		"onLanguage:typescript"
-	],
+	"activationEvents": ["onLanguage:javascript", "onLanguage:typescript"],
 	"main": "./client/out/extension",
 	"contributes": {
 		"configuration": {
@@ -45,11 +38,7 @@
 				"pAPRika.trace.server": {
 					"scope": "window",
 					"type": "string",
-					"enum": [
-						"off",
-						"messages",
-						"verbose"
-					],
+					"enum": ["off", "messages", "verbose"],
 					"default": "off",
 					"description": "Traces the communication between VS Code and the language server."
 				}
@@ -58,7 +47,11 @@
 		"commands": [
 			{
 				"command": "pAPRika.runAPRSuite",
-				"title": "Run pAPRika"
+				"title": "pAPRika: Spice this file"
+			},
+			{
+				"command": "pAPRika.runAPRSuiteAll",
+				"title": "pAPRika: Spice all open files"
 			}
 		]
 	},

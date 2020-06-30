@@ -8,8 +8,7 @@ import {
 	TextDocuments,
 	TextDocumentSyncKind,
 	CodeActionKind,
-	CodeActionParams,
-	TextDocumentContentChangeEvent
+	CodeActionParams
 } from 'vscode-languageserver'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { uriToFilePath } from 'vscode-languageserver/lib/files'
@@ -45,6 +44,7 @@ const defaultSettings: PAPRikaSettings = {
 	runOnOpen: true
 }
 let globalSettings: PAPRikaSettings = defaultSettings
+let activeDocument: TextDocument
 
 connection.onInitialize((params: InitializeParams) => {
 	let capabilities = params.capabilities
@@ -68,7 +68,7 @@ connection.onInitialize((params: InitializeParams) => {
 		capabilities: {
 			textDocumentSync: TextDocumentSyncKind.Incremental,
 			executeCommandProvider: {
-				commands: ['pAPRika.runAPRSuite']
+				commands: ['pAPRika.runAPRSuite', 'pAPRika.runAPRSuiteAll']
 			}
 		}
 	}
@@ -112,6 +112,11 @@ documents.onDidOpen((documentEvent) => {
 	globalSettings.runOnOpen && runPAPRika(documentEvent.document)
 })
 
+documents.onDidChangeContent((documentEvent) => {
+	activeDocument = documentEvent.document
+	suggestionProvider.resetDiagnostics(documentEvent.document.uri)
+})
+
 connection.onDidChangeConfiguration((change) => {
 	if (change.settings) {
 		globalSettings = <PAPRikaSettings>(change.settings.pAPRika || defaultSettings)
@@ -130,12 +135,9 @@ connection.onCodeAction((codeActionParams: CodeActionParams) => {
 	return codeActions
 })
 
-documents.onDidChangeContent((params) => {
-	suggestionProvider.resetDiagnostics(params.document.uri)
-})
-
-connection.onExecuteCommand(async (handler) => {
-	handler.command == 'pAPRika.runAPRSuite' && documents.all().forEach(runPAPRika)
+connection.onExecuteCommand((executeCommandParams) => {
+	executeCommandParams.command == 'pAPRika.runAPRSuite' && runPAPRika(activeDocument)
+	executeCommandParams.command == 'pAPRika.runAPRSuiteAll' && documents.all().forEach(runPAPRika)
 })
 
 /**
