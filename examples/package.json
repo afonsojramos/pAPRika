@@ -10,8 +10,8 @@
 	"type": "module",
 	"devDependencies": {
 		"assert": "^2.0.0",
-		"chai": "^4.2.0",
-		"fast-check": "^1.25.1",
-		"mocha": "^7.2.0"
+		"chai": "^4.3.4",
+		"fast-check": "^2.14.0",
+		"mocha": "^8.3.2"
 	}
 }
