@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import 'mocha'
 import * as ts from 'typescript'
 
-const testPath: string = 'server/src/test/examples/'
+const testPath: string = 'examples/src/'
 const testIdentifier: TestIdentifier = {
 	testCode: 'myFunction',
 	functionName: 'myFunction',
