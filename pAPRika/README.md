@@ -14,6 +14,8 @@ For detailed instructions on how to configure, customize, add/migrate content, a
 
 ## Development
 
-To set up your environment to develop this theme, run `bundle install`.
+First of all, install [Jekyll](https://jekyllrb.com/docs/).
+
+Now, you can set up your environment to develop this theme, by running `bundle install`.
 
 To test the theme, run `bundle exec jekyll serve` and open your browser at `http://localhost:4000/test/`. This starts a Jekyll server using content in the `test/` directory. As modifications are made to the theme and test site, it will regenerate and you should see the changes in the browser after a refresh.
